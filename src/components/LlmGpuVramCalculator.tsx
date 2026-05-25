@@ -289,6 +289,14 @@ function modelMeta(model: ModelDef): ModelMeta {
     return { family: 'DeepSeek R1', variant: 'Reasoning MoE', scale: name.replace(/^DeepSeek-R1-/, '') };
   }
 
+  if (name.startsWith('DeepSeek-V4')) {
+    return {
+      family: 'DeepSeek V4',
+      variant: name.includes('Pro') ? 'Pro MoE' : 'Flash MoE',
+      scale: name.includes('Pro') ? '1.6T-A49B' : '284B-A13B',
+    };
+  }
+
   if (name.startsWith('DeepSeek-V3.1')) {
     return { family: 'DeepSeek V3.1', variant: 'Hybrid MoE', scale: '671B-A37B' };
   }
@@ -347,6 +355,8 @@ function getModelColor(name: string): string {
 
 function getModelVariantColor(variant: string): string {
   if (variant === 'Reasoning MoE') return '#1d4ed8';
+  if (variant === 'Pro MoE') return '#0369a1';
+  if (variant === 'Flash MoE') return '#0891b2';
   if (variant === 'Hybrid MoE') return '#0e7490';
   if (variant === 'Coder') return '#ea580c';
   if (variant === 'Next') return '#2563eb';

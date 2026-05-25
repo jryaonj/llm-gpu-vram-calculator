@@ -42,6 +42,18 @@ const deepseekR1Report = {
   note: 'Reasoning training background for the R1 family.',
 };
 
+const deepseekV4Docs = {
+  label: 'Transformers DeepSeek V4 docs',
+  url: 'https://huggingface.co/docs/transformers/model_doc/deepseek_v4',
+  note: 'Transformers support docs for DeepSeek V4 configuration and cache classes.',
+};
+
+const deepseekV4Report = {
+  label: 'DeepSeek-V4 technical report',
+  url: 'https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro/blob/main/DeepSeek_V4.pdf',
+  note: 'Technical report for the DeepSeek V4 Pro and Flash preview models.',
+};
+
 const gemmaSource = (model: string) => ({
   label: `${model} model card`,
   url: `https://huggingface.co/google/${model}`,
@@ -74,6 +86,7 @@ const gemma4Source = (model: string) => ({
 
 const estimatedInt4Note = 'Weight size is an INT4/AWQ-style local estimate; architecture and parameter counts come from the linked model card.';
 const deepseekMlaNote = 'Weight size follows the published FP8 checkpoint path. KV cache uses a simplified MLA latent-cache estimate from kv_lora_rank + qk_rope_head_dim rather than standard GQA head geometry.';
+const deepseekV4CacheNote = 'Weight size follows the published mixed FP4/FP8 artifact size where available. KV cache uses the model-card 10%-of-V3.x long-context cache claim as a compressed-attention planning proxy.';
 const gemmaHybridAttentionNote = 'Weight size is an INT4/AWQ-style local estimate. KV cache is a simplified estimate for Gemma hybrid local/global attention and may differ from exact runtime allocation.';
 
 const modelReleaseDates: Record<string, string> = {
@@ -100,12 +113,16 @@ const modelReleaseDates: Record<string, string> = {
   'DeepSeek-V3-0324': '2025-03-24',
   'DeepSeek-V3.1': '2025-08-21',
   'DeepSeek-R1-0528': '2025-05-28',
+  'DeepSeek-V4-Flash': '2026-04-24',
+  'DeepSeek-V4-Pro': '2026-04-24',
   'Gemma3-1B': '2025-03-12',
   'Gemma3-4B': '2025-03-12',
   'Gemma3-12B': '2025-03-12',
   'Gemma3-27B': '2025-03-12',
-  'Gemma4-26B-A4B': '2026-04-01',
-  'Gemma4-31B': '2026-04-01',
+  'Gemma4-E2B': '2026-04-02',
+  'Gemma4-E4B': '2026-04-02',
+  'Gemma4-26B-A4B': '2026-04-02',
+  'Gemma4-31B': '2026-04-02',
 };
 
 const baseModelDefs: ModelDef[] = [
@@ -565,6 +582,42 @@ const baseModelDefs: ModelDef[] = [
     sourceNote: deepseekMlaNote,
   },
   {
+    name: 'DeepSeek-V4-Flash',
+    paramsB: 284,
+    hiddenSize: 4096,
+    activeParamsB: 13,
+    totalParamsB: 284,
+    modelSizeGB: 158.07,
+    perKVsizeFp8: 43 * 58,
+    quantType: 'int4',
+    quantBits: 4,
+    layers: 43,
+    numKVHeads: 1,
+    headDim: 58,
+    contextLength: 1048576,
+    source: deepseekSource('DeepSeek-V4-Flash'),
+    sources: [deepseekSource('DeepSeek-V4-Flash'), deepseekSource('DeepSeek-V4-Flash-Base'), deepseekV4Docs, deepseekV4Report],
+    sourceNote: deepseekV4CacheNote,
+  },
+  {
+    name: 'DeepSeek-V4-Pro',
+    paramsB: 1600,
+    hiddenSize: 7168,
+    activeParamsB: 49,
+    totalParamsB: 1600,
+    modelSizeGB: 861.61,
+    perKVsizeFp8: 61 * 58,
+    quantType: 'int4',
+    quantBits: 4,
+    layers: 61,
+    numKVHeads: 1,
+    headDim: 58,
+    contextLength: 1048576,
+    source: deepseekSource('DeepSeek-V4-Pro'),
+    sources: [deepseekSource('DeepSeek-V4-Pro'), deepseekSource('DeepSeek-V4-Pro-Base'), deepseekV4Docs, deepseekV4Report],
+    sourceNote: deepseekV4CacheNote,
+  },
+  {
     name: 'Gemma3-1B',
     paramsB: 1,
     hiddenSize: 1152,
@@ -641,12 +694,50 @@ const baseModelDefs: ModelDef[] = [
     sourceNote: gemmaHybridAttentionNote,
   },
   {
+    name: 'Gemma4-E2B',
+    paramsB: 2.3,
+    hiddenSize: 1536,
+    activeParamsB: 2.3,
+    totalParamsB: 2.3,
+    modelSizeGB: 1.37,
+    perKVsizeFp8: 35 * 1 * 256,
+    quantType: 'int4',
+    quantBits: 4,
+    awqGroup: 32,
+    layers: 35,
+    numKVHeads: 1,
+    headDim: 256,
+    contextLength: 131072,
+    source: gemma4Source('gemma-4-E2B'),
+    sources: [gemma4Source('gemma-4-E2B'), gemma4Docs],
+    sourceNote: 'Effective parameter count is used for throughput; the model card reports 5.1B total with per-layer embeddings. Weight size is an INT4/AWQ-style local estimate.',
+  },
+  {
+    name: 'Gemma4-E4B',
+    paramsB: 4.5,
+    hiddenSize: 2560,
+    activeParamsB: 4.5,
+    totalParamsB: 4.5,
+    modelSizeGB: 2.67,
+    perKVsizeFp8: 42 * 2 * 256,
+    quantType: 'int4',
+    quantBits: 4,
+    awqGroup: 32,
+    layers: 42,
+    numKVHeads: 2,
+    headDim: 256,
+    contextLength: 131072,
+    source: gemma4Source('gemma-4-E4B'),
+    sources: [gemma4Source('gemma-4-E4B'), gemma4Docs],
+    sourceNote: 'Effective parameter count is used for throughput; the model card reports 8B total with per-layer embeddings. Weight size is an INT4/AWQ-style local estimate.',
+  },
+  {
     name: 'Gemma4-26B-A4B',
-    paramsB: 26.1,
+    paramsB: 25.2,
     hiddenSize: 2816,
-    activeParamsB: 4,
-    totalParamsB: 26.1,
-    modelSizeGB: 15.50,
+    activeParamsB: 3.8,
+    totalParamsB: 25.2,
+    modelSizeGB: 14.96,
     perKVsizeFp8: 30 * 8 * 256,
     quantType: 'int4',
     quantBits: 4,
@@ -661,11 +752,11 @@ const baseModelDefs: ModelDef[] = [
   },
   {
     name: 'Gemma4-31B',
-    paramsB: 31,
+    paramsB: 30.7,
     hiddenSize: 5376,
-    activeParamsB: 31,
-    totalParamsB: 31,
-    modelSizeGB: 18.41,
+    activeParamsB: 30.7,
+    totalParamsB: 30.7,
+    modelSizeGB: 18.23,
     perKVsizeFp8: 60 * 16 * 256,
     quantType: 'int4',
     quantBits: 4,

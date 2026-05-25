@@ -20,8 +20,8 @@ The built-in catalog is intentionally practical rather than exhaustive. Model ro
 Current model families include:
 
 - Qwen3, Qwen3.5, and Qwen3.6 dense/MoE checkpoints.
-- DeepSeek V3, V3.1, and R1-0528 MoE checkpoints.
-- Gemma 3 dense checkpoints and Gemma 4 dense/MoE checkpoints.
+- DeepSeek V3, V3.1, R1-0528, and V4 Flash/Pro MoE checkpoints.
+- Gemma 3 dense checkpoints and all four Gemma 4 sizes: E2B, E4B, 26B-A4B, and 31B.
 
 Each built-in model and GPU should include source URLs when available. The source link usually points to the Hugging Face model card/config or an official vendor hardware page. Supplemental sources such as TechPowerUp can be useful for GPU data, but official vendor pages should win when the numbers disagree.
 
@@ -29,6 +29,7 @@ Some fields are estimates even when the source row is strong:
 
 - INT4 weight size uses a local grouped-quantization estimate unless the catalog row explicitly stores a measured artifact size.
 - DeepSeek V3/R1 use an MLA-style KV approximation based on latent KV rank rather than normal GQA head geometry.
+- DeepSeek V4 uses a compressed-attention KV planning proxy based on the model-card claim that Pro needs about 10% of DeepSeek V3.2 KV cache at 1M tokens. This is a capacity prior, not an exact runtime allocator trace.
 - Gemma 3/4 hybrid local/global attention can allocate cache differently across runtimes, so the row documents this in `sourceNote`.
 
 ## Exported Data
@@ -130,5 +131,9 @@ The calculator defaults should be treated as conservative planning values:
 - Qwen3.6-35B-A3B model card: https://huggingface.co/Qwen/Qwen3.6-35B-A3B
 - DeepSeek-V3.1 model card: https://huggingface.co/deepseek-ai/DeepSeek-V3.1
 - DeepSeek-R1-0528 model card: https://huggingface.co/deepseek-ai/DeepSeek-R1-0528
+- DeepSeek-V4 model card/report: https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro
+- DeepSeek-V4 Transformers docs: https://huggingface.co/docs/transformers/model_doc/deepseek_v4
 - Gemma 3 docs: https://huggingface.co/docs/transformers/model_doc/gemma3
+- Gemma 4 31B model card: https://huggingface.co/google/gemma-4-31B
+- Gemma 4 26B-A4B model card: https://huggingface.co/google/gemma-4-26B-A4B
 - Gemma 4 docs: https://github.com/huggingface/transformers/blob/main/docs/source/en/model_doc/gemma4.md

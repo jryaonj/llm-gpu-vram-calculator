@@ -8,7 +8,7 @@ An interactive web calculator for estimating LLM serving VRAM, KV cache pressure
 ## Features
 
 - Guided setup and detailed controls for model, hardware, and runtime parameters.
-- Sourced model catalog covering Qwen3/Qwen3.5/Qwen3.6, DeepSeek V3/R1, and Gemma 3/4 families.
+- Sourced model catalog covering Qwen3/Qwen3.5/Qwen3.6, DeepSeek V3/R1/V4, and Gemma 3/4 families.
 - GPU catalog with release dates, vendor metadata, architecture hints, and official or supplemental source links.
 - Quantization and KV-cache support hints for FP16, FP8, INT8, INT4, and FP32 fallback paths.
 - Formula/theory panel for the capacity and throughput estimates.
