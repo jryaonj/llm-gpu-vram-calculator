@@ -127,6 +127,9 @@ const translations = {
     blocked: 'Blocked',
     adjustHardware: 'Adjust hardware or memory budget',
     aggregateGeneration: 'Aggregate generation bound',
+    aggregatePrompt: 'Aggregate prompt bound',
+    perUserGeneration: 'Per-user generation',
+    perUserPrompt: 'Per-user prompt',
     installedMemory: 'installed memory',
     guidedSetup: 'Guided Setup',
     detailedControls: 'Detailed Controls',
@@ -330,6 +333,9 @@ const translations = {
     blocked: '受阻',
     adjustHardware: '调整硬件或显存预算',
     aggregateGeneration: '整体生成瓶颈估算',
+    aggregatePrompt: '整体预填充瓶颈估算',
+    perUserGeneration: '单用户生成',
+    perUserPrompt: '单用户预填充',
     installedMemory: '已安装显存',
     guidedSetup: '引导设置',
     detailedControls: '详细控制',
@@ -1644,7 +1650,7 @@ function TheoryPanel({ locale, parallelGPUs, sources }: { locale: Locale; parall
         </div>
       </section>
 
-      <aside className="space-y-4">
+      <aside className="sticky-side-stack space-y-4">
         <section className="panel p-4">
           <h3 className="text-sm font-bold text-slate-950">{zh ? '如何使用这些数值' : 'How to Use This'}</h3>
           <p className="mt-2 text-sm leading-6 text-slate-600">
@@ -2423,7 +2429,7 @@ export default function LLMVRAMCalculator({ locale = 'en_US' }: LLMVRAMCalculato
           <StatTile
             label={t('throughput')}
             value={results && !results.error ? `${results.genSpeed.toFixed(0)} tok/s` : t('blocked')}
-            detail={results?.error ? t('adjustHardware') : t('aggregateGeneration')}
+            detail={results?.error ? t('adjustHardware') : `${t('perUserGeneration')}: ${formatNumber(results?.sharedGen ?? 0, 0)} tok/s`}
           />
         </div>
       </section>
@@ -3015,7 +3021,7 @@ export default function LLMVRAMCalculator({ locale = 'en_US' }: LLMVRAMCalculato
             )}
           </div>
 
-          <aside className="space-y-4">
+          <aside className="sticky-side-stack space-y-4">
             <section className="panel p-4">
               <h3 className="text-sm font-bold text-slate-950">{t('setupSummary')}</h3>
               <div className="mt-4 space-y-3">
@@ -3607,9 +3613,11 @@ export default function LLMVRAMCalculator({ locale = 'en_US' }: LLMVRAMCalculato
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div className="panel-compact p-4">
                     <h3 className="text-sm font-bold text-slate-950">{t('throughput')}</h3>
-                    <div className="mt-4 grid grid-cols-2 gap-4">
-                      <StatTile label={t('generation')} value={`${(results?.genSpeed ?? 0).toFixed(0)} tok/s`} />
-                      <StatTile label={t('prompt')} value={`${(results?.promptSpeed ?? 0).toFixed(0)} tok/s`} />
+                    <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                      <StatTile label={t('aggregateGeneration')} value={`${(results?.genSpeed ?? 0).toFixed(0)} tok/s`} detail={`${parallelGPUs} ${t('gpuUnit')}`} />
+                      <StatTile label={t('aggregatePrompt')} value={`${(results?.promptSpeed ?? 0).toFixed(0)} tok/s`} detail={`${parallelGPUs} ${t('gpuUnit')}`} />
+                      <StatTile label={t('perUserGeneration')} value={`${(results?.sharedGen ?? 0).toFixed(0)} tok/s`} detail={`${userCount} ${t('users')}`} />
+                      <StatTile label={t('perUserPrompt')} value={`${(results?.sharedPrompt ?? 0).toFixed(0)} tok/s`} detail={`${userCount} ${t('users')}`} />
                     </div>
                   </div>
                   <div className="panel-compact p-4">

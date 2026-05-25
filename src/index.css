@@ -51,13 +51,76 @@ pre,
 }
 
 .app-shell {
+  --sticky-offset: 5.5rem;
+  --sticky-space: 6.5rem;
   background: transparent;
+}
+
+.app-shell[data-scrolled='true'] {
+  --sticky-offset: 4.25rem;
+  --sticky-space: 5rem;
 }
 
 .app-header {
   background: rgba(255, 255, 255, 0.88);
   border-bottom: 1px solid rgba(15, 23, 42, 0.08);
   backdrop-filter: blur(18px);
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.app-shell[data-scrolled='true'] .app-header {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+.app-header-inner {
+  transition: padding 0.2s ease;
+}
+
+.app-shell[data-scrolled='true'] .app-header-inner {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.app-header-logo {
+  transition: width 0.2s ease, height 0.2s ease, border-radius 0.2s ease;
+}
+
+.app-header-logo-icon {
+  transition: width 0.2s ease, height 0.2s ease;
+}
+
+.app-shell[data-scrolled='true'] .app-header-logo {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 0.45rem;
+}
+
+.app-shell[data-scrolled='true'] .app-header-logo-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.app-header-title {
+  transition: font-size 0.2s ease, line-height 0.2s ease;
+}
+
+.app-shell[data-scrolled='true'] .app-header-title {
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.app-header-subtitle {
+  max-height: 2rem;
+  opacity: 1;
+  overflow: hidden;
+  transition: max-height 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
+}
+
+.app-shell[data-scrolled='true'] .app-header-subtitle {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-0.125rem);
 }
 
 .header-icon-action {
@@ -71,6 +134,12 @@ pre,
   color: #4b5563;
   font-weight: 600;
   line-height: 1;
+}
+
+.app-shell[data-scrolled='true'] .header-icon-action {
+  min-height: 2.25rem;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
 }
 
 .header-icon-action:hover {
@@ -421,6 +490,19 @@ pre,
 
 .detail-setup-stack > .panel {
   scroll-snap-align: start;
+}
+
+@media (min-width: 1280px) {
+  .detail-setup-stack,
+  .sticky-side-stack {
+    position: sticky;
+    top: var(--sticky-offset);
+    align-self: start;
+    max-height: calc(100vh - var(--sticky-space));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-right: 0.125rem;
+  }
 }
 
 /* Enhanced hover effects for cards */

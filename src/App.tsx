@@ -31,6 +31,7 @@ const appTranslations = {
 
 function App() {
   const [locale, setLocale] = useState<Locale>('en_US');
+  const [hasScrolled, setHasScrolled] = useState(false);
   const t = appTranslations[locale];
 
   useEffect(() => {
@@ -51,18 +52,30 @@ function App() {
     document.head.appendChild(meta);
   }, [locale, t.metaDescription, t.metaTitle]);
 
+  useEffect(() => {
+    function handleScroll() {
+      const nextHasScrolled = window.scrollY > 24;
+      setHasScrolled((current) => current === nextHasScrolled ? current : nextHasScrolled);
+    }
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <div className="app-shell flex flex-col min-h-screen">
+    <div className="app-shell flex flex-col min-h-screen" data-scrolled={hasScrolled}>
       <header className="app-header sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="app-header-inner max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3 min-w-0">
-              <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shrink-0">
-                <Calculator className="w-5 h-5 text-white" />
+              <div className="app-header-logo w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shrink-0">
+                <Calculator className="app-header-logo-icon w-5 h-5 text-white" />
               </div>
               <div className="min-w-0">
-                <h1 className="wrap-anywhere text-xl font-semibold leading-tight text-gray-900">{t.title}</h1>
-                <p className="wrap-anywhere text-sm leading-snug text-gray-500">{t.subtitle}</p>
+                <h1 className="app-header-title wrap-anywhere text-xl font-semibold leading-tight text-gray-900">{t.title}</h1>
+                <p className="app-header-subtitle wrap-anywhere text-sm leading-snug text-gray-500">{t.subtitle}</p>
               </div>
             </div>
 
