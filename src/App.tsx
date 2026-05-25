@@ -1,24 +1,55 @@
-import { useEffect } from 'react';
-import { Calculator, Github } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Calculator, Github, Languages } from 'lucide-react';
 import LLMVRAMCalculator from './components/LlmGpuVramCalculator';
 
-function App() {
-  useEffect(() => {
-    document.title = 'LLM GPU VRAM Calculator - VRAM requirements and performance estimation for LLM inference';
+type Locale = 'en_US' | 'zh_CN';
 
-    const description = 'Calculate GPU memory requirements and performance for Large Language Models. Professional hardware calculator for AI developers.';
+const appTranslations = {
+  en_US: {
+    title: 'LLM GPU VRAM Calculator',
+    subtitle: 'VRAM requirements and performance estimation for LLM inference',
+    metaTitle: 'LLM GPU VRAM Calculator - VRAM requirements and performance estimation for LLM inference',
+    metaDescription: 'Calculate GPU memory requirements and performance for Large Language Models. Professional hardware calculator for AI developers.',
+    github: 'GitHub',
+    language: 'Language',
+    calculations: 'Calculations for AI developers',
+    builtWith: 'Built with Codex assistance',
+    poweredBy: 'Powered by',
+  },
+  zh_CN: {
+    title: 'LLM GPU 显存计算器',
+    subtitle: '面向 LLM 推理的显存需求与性能估算',
+    metaTitle: 'LLM GPU 显存计算器 - 面向 LLM 推理的显存需求与性能估算',
+    metaDescription: '计算大语言模型在不同 GPU 配置下的显存需求与推理性能，服务 AI 开发者的硬件规划工具。',
+    github: 'GitHub',
+    language: '语言',
+    calculations: '面向 AI 开发者的估算工具',
+    builtWith: '由 Codex 协助构建',
+    poweredBy: '技术支持',
+  },
+} as const;
+
+function App() {
+  const [locale, setLocale] = useState<Locale>('en_US');
+  const t = appTranslations[locale];
+
+  useEffect(() => {
+    document.title = t.metaTitle;
+    document.documentElement.lang = locale === 'zh_CN' ? 'zh-CN' : 'en-US';
+    document.documentElement.dataset.locale = locale;
+
     const metaDescription = document.querySelector('meta[name="description"]');
 
     if (metaDescription) {
-      metaDescription.setAttribute('content', description);
+      metaDescription.setAttribute('content', t.metaDescription);
       return;
     }
 
     const meta = document.createElement('meta');
     meta.name = 'description';
-    meta.content = description;
+    meta.content = t.metaDescription;
     document.head.appendChild(meta);
-  }, []);
+  }, [locale, t.metaDescription, t.metaTitle]);
 
   return (
     <div className="app-shell flex flex-col min-h-screen">
@@ -30,26 +61,41 @@ function App() {
                 <Calculator className="w-5 h-5 text-white" />
               </div>
               <div className="min-w-0">
-                <h1 className="wrap-anywhere text-xl font-semibold leading-tight text-gray-900">LLM GPU VRAM Calculator</h1>
-                <p className="wrap-anywhere text-sm leading-snug text-gray-500">VRAM requirements and performance estimation for LLM inference</p>
+                <h1 className="wrap-anywhere text-xl font-semibold leading-tight text-gray-900">{t.title}</h1>
+                <p className="wrap-anywhere text-sm leading-snug text-gray-500">{t.subtitle}</p>
               </div>
             </div>
 
-            <a
-              href="https://github.com/jryaonj/llm-gpu-vram-calculator"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
-            >
-              <Github className="w-4 h-4" />
-              <span className="hidden sm:inline text-sm">GitHub</span>
-            </a>
+            <div className="flex shrink-0 items-center gap-2">
+              <label className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 text-sm font-semibold text-gray-600">
+                <Languages className="h-4 w-4 text-gray-400" />
+                <span className="sr-only">{t.language}</span>
+                <select
+                  aria-label={t.language}
+                  className="bg-transparent outline-none"
+                  value={locale}
+                  onChange={(event) => setLocale(event.target.value as Locale)}
+                >
+                  <option value="en_US">en_US</option>
+                  <option value="zh_CN">zh_CN</option>
+                </select>
+              </label>
+              <a
+                href="https://github.com/jryaonj/llm-gpu-vram-calculator"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
+              >
+                <Github className="w-4 h-4" />
+                <span className="hidden sm:inline text-sm">{t.github}</span>
+              </a>
+            </div>
           </div>
         </div>
       </header>
 
       <main className="flex-grow max-w-[1440px] mx-auto px-4 sm:px-6 py-6 sm:py-8 w-full">
-        <LLMVRAMCalculator />
+        <LLMVRAMCalculator locale={locale} onLocaleChange={setLocale} />
       </main>
 
       <footer className="bg-white/80 border-t border-gray-200 py-6">
@@ -62,13 +108,13 @@ function App() {
                 jryaonj
               </a>
               <span className="text-gray-300">•</span>
-              <span>Calculations for AI developers</span>
+              <span>{t.calculations}</span>
               <span className="text-gray-300">•</span>
-              <span>Built with Codex assistance</span>
+              <span>{t.builtWith}</span>
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-2 text-sm text-gray-500">
-              <span>Powered by</span>
+              <span>{t.poweredBy}</span>
               <a href="https://react.dev" className="font-medium text-blue-600 hover:underline">React</a>
               <span className="text-gray-300">•</span>
               <a href="https://daisyui.com" className="font-medium text-blue-500 hover:underline">DaisyUI</a>

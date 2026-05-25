@@ -1,6 +1,19 @@
 # Changelog
 
+## 2026-05-26
+
+### Documentation and design patterns
+
+- Updated README feature notes for expanded zh_CN coverage and Noto Sans SC typography.
+- Refreshed calculation notes to describe the current i18n/content translation scope and the deliberate choice to keep model, hardware, dtype, formula, and source names aligned with upstream references.
+- Added a reusable resource-calculator UI pattern guide for future CPU, GPU, memory, SSD, accelerator, and other performance-estimator projects.
+
 ## 2026-05-25
+
+### i18n polish
+
+- Lifted locale state to the app shell and added a global header language switcher for `en_US` and `zh_CN`.
+- Added the Noto Sans SC CJK font path and expanded Chinese translations across the guided setup, detailed controls, workspace tabs, formulas, theory notes, source fallbacks, and marginal support hints.
 
 ### Catalog precision follow-up
 

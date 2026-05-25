@@ -45,7 +45,9 @@ The export is generated from in-memory catalog data with a browser `Blob`; no se
 
 ## Internationalization
 
-The app defaults to `en_US` and includes an initial `zh_CN` locale. The first pass covers global navigation, summary labels, export controls, and major guided-result controls. Formula names, source titles, and highly technical catalog labels currently stay in English so they remain aligned with upstream model and hardware references.
+The app defaults to `en_US` and includes a `zh_CN` locale. Locale selection is shared by the app shell and calculator so the header, footer, guided setup, detailed controls, result workspace, formulas, theory notes, source fallback text, and marginal hints switch together.
+
+Simplified Chinese rendering uses Noto Sans SC ahead of the Latin UI font stack. Model names, GPU names, source titles, architecture names, dtype names, and formulas intentionally keep their upstream technical spelling so users can match them to Hugging Face, vendor, vLLM, and paper references.
 
 ## Model Weight Memory
 

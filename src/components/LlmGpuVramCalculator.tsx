@@ -91,6 +91,11 @@ interface DetailLayoutOption {
   className: string;
 }
 
+interface LLMVRAMCalculatorProps {
+  locale?: Locale;
+  onLocaleChange?: (locale: Locale) => void;
+}
+
 const translations = {
   en_US: {
     language: 'Language',
@@ -114,6 +119,186 @@ const translations = {
     guidedReady: 'Guided calculation ready',
     reopenGuide: 'Reopen guide',
     dismiss: 'Dismiss',
+    guidedIntroTitle: 'Guided Setup',
+    guidedIntroDesc: 'Search directly, or use staged choices. Detailed controls stay one click away.',
+    chooseModel: 'Choose model',
+    chooseModelSubtitle: 'Start with family, then type, then scale. Search and detailed choice are optional shortcuts.',
+    model: 'Model',
+    type: 'Type',
+    params: 'Params',
+    active: 'active',
+    searchModelPlaceholder: 'Type to search a model directly',
+    detailedChoice: 'Detailed choice',
+    released: 'Released',
+    family: 'Family',
+    scale: 'Scale',
+    review: 'Review',
+    modelSubstep1: 'Model substep 1',
+    chooseModelFamily: 'Choose model family',
+    modelSubstep2Type: 'Model substep 2: type',
+    modelSubstep3Scale: 'Model substep 3: scale',
+    options: 'options',
+    combinationResult: 'Combination result',
+    detailedModelChoice: 'Detailed model choice',
+    totalParamsB: 'Total Params (B)',
+    activeParamsB: 'Active Params (B)',
+    layers: 'Layers',
+    chooseScaleHint: 'Choose a scale or search result to move to hardware.',
+    chooseHardware: 'Choose GPU hardware',
+    chooseHardwareSubtitle: 'Start with vendor, then hardware class, then the accelerator card.',
+    gpu: 'GPU',
+    vram: 'VRAM',
+    bandwidth: 'Bandwidth',
+    lockedModelFirst: 'Complete the model choice to unlock hardware selection.',
+    readyHardware: 'Ready for hardware selection.',
+    searchGpuPlaceholder: 'Type to search a GPU directly',
+    vendor: 'Vendor',
+    class: 'Class',
+    card: 'Card',
+    hardwareSubstep2Class: 'Hardware substep 2: class',
+    hardwareSubstep3Card: 'Hardware substep 3: card',
+    detailedHardwareChoice: 'Detailed hardware choice',
+    supplier: 'Supplier',
+    architecture: 'Architecture',
+    memoryBw: 'Memory BW (GB/s)',
+    back: 'Back',
+    chooseGpuHint: 'Choose a GPU card to move to parameters.',
+    perfParams: 'Performance estimation parameters',
+    perfParamsSubtitle: 'Pick an estimation preset first, then adjust precision, context, concurrency, and guard rails.',
+    lockedHardwareFirst: 'Choose GPU hardware before tuning runtime assumptions.',
+    readyPerf: 'Ready for performance parameters.',
+    weights: 'Weights',
+    kvCache: 'KV cache',
+    context: 'Context',
+    users: 'users',
+    gpuUnit: 'GPU',
+    preset: 'Preset',
+    startPoint: 'Start point',
+    workload: 'Workload',
+    estimationPreset: 'Estimation preset',
+    balanced: 'Balanced',
+    balancedDesc: 'INT4 weights, FP8 KV, normal reserve',
+    memorySaver: 'Memory saver',
+    memorySaverDesc: 'Aggressive capacity margin',
+    throughputProbe: 'Throughput probe',
+    throughputProbeDesc: 'FP8 weights with safer KV',
+    longContext: 'Long context',
+    longContextDesc: 'Raises context floor to 32K',
+    weightQuantization: 'Weight Quantization',
+    kvCachePrecision: 'KV Cache Precision',
+    concurrentUsers: 'Concurrent Users',
+    parallelGpus: 'Parallel GPUs',
+    maxContextLength: 'Max Context Length',
+    reserveVramGb: 'Reserve VRAM (GB)',
+    currentPerfAssumptions: 'Current performance assumptions',
+    memoryPolicy: 'Memory policy',
+    parallelism: 'Parallelism',
+    stepsComplete: 'Step 1-2-3 complete',
+    readyToCompute: 'Ready to compute',
+    readyToComputeDesc: 'Model, GPU hardware, and runtime assumptions are set.',
+    computeFinalResult: 'Compute final result',
+    setupSummary: 'Setup summary',
+    nextAction: 'Next action',
+    nextActionModel: 'Choose a model scale or direct search result. The next step opens automatically.',
+    nextActionHardware: 'Choose a GPU card. Runtime parameters open automatically after the card is selected.',
+    nextActionRuntime: 'Tune assumptions, then compute once at the final step.',
+    nextActionDone: 'The final result is open in Detailed Controls.',
+    focusLayout: 'Focus layout',
+    paramsLabel: 'Params',
+    workspaceLabel: 'Workspace',
+    auto: 'Auto',
+    manual: 'Manual',
+    shrinkParamPanel: 'Shrink parameter panel',
+    expandParamPanel: 'Expand parameter panel',
+    setupControls: 'Setup controls',
+    selectedConfiguration: 'Selected configuration',
+    editingConfiguration: 'Editing configuration',
+    done: 'Done',
+    hardware: 'Hardware',
+    deployment: 'Deployment',
+    noModelSelected: 'No model selected',
+    customGpu: 'Custom GPU',
+    modelPanelDesc: 'Choose from catalog, compose by family, or enter custom values',
+    catalog: 'Catalog',
+    structured: 'Structured',
+    custom: 'Custom',
+    searchModelDetailedPlaceholder: 'Search model, family, scale',
+    viewModelDetails: 'View model details',
+    modelSizeGb: 'Model Size (GB)',
+    kvHeads: 'KV Heads',
+    headDim: 'Head Dim',
+    kvSizeKbToken: 'KV Size (KB/Token)',
+    reset: 'Reset',
+    hardwarePanelDesc: 'Pick a GPU catalog item or enter supplier numeric specs',
+    numeric: 'Numeric',
+    searchGpuDetailedPlaceholder: 'Search GPU, architecture, class',
+    defaultKvQuant: 'Default KV Quant',
+    deploymentPanelDesc: 'Concurrency, context, and memory guard rails',
+    vramUtilization: 'VRAM Utilization',
+    reserveVram: 'Reserve VRAM',
+    sliderMax: 'Slider max',
+    workspace: 'Workspace',
+    workspaceDesc: 'Calculation output, equations, model facts, hardware facts, and marginal hints',
+    results: 'Results',
+    formulas: 'Formulas',
+    hints: 'Hints',
+    estimatorViews: 'Estimator views',
+    guidedResultReadyDesc: 'Estimated {total} GB VRAM, {usable} GB usable budget.',
+    configurationIssue: 'Configuration Issue',
+    totalVramRequired: 'Total VRAM Required',
+    usableAfterReserve: 'GB usable after reserve',
+    awaitingConfiguration: 'Awaiting configuration',
+    installedGpuMemory: 'of installed GPU memory',
+    modelWeights: 'Model weights',
+    kvCacheRequest: 'KV cache / request',
+    reserve: 'Reserve',
+    utilizationCap: 'utilization cap',
+    generation: 'Generation',
+    prompt: 'Prompt',
+    capacity: 'Capacity',
+    fullSequences: 'Full sequences',
+    tokenBudget: 'Token budget',
+    totalParams: 'Total params',
+    activeParams: 'Active params',
+    nativeContext: 'Native context',
+    customValue: 'Custom',
+    attentionKv: 'Attention / KV',
+    hiddenSize: 'Hidden size',
+    kvBytesValue: 'KV bytes/value',
+    modelSources: 'Model Sources',
+    noExternalSource: 'No external source is attached to this custom entry.',
+    noGpuSelected: 'No GPU selected',
+    vramPerGpu: 'VRAM / GPU',
+    totalVram: 'Total VRAM',
+    runtimeDefaults: 'Runtime Defaults',
+    kvQuant: 'KV quant',
+    gpuCount: 'GPU count',
+    utilization: 'Utilization',
+    hardwareSources: 'Hardware Sources',
+    weightMargin: 'Weight margin',
+    savedVsFp16Weights: 'Saved vs FP16 weights',
+    kvMargin: 'KV margin',
+    savedVsFp16Kv: 'Saved vs FP16 KV',
+    extraVsFp16Kv: 'Extra vs FP16 KV',
+    backendRisk: 'Backend risk',
+    clean: 'Clean',
+    blocker: 'blocker',
+    blockers: 'blockers',
+    check: 'check',
+    checks: 'checks',
+    supported: 'Supported',
+    partial: 'Partial',
+    unsupported: 'Unsupported',
+    supportMatrix: 'Selection Support Matrix',
+    supportMatrixDesc: 'Capacity estimates are local math; support status follows current vLLM/NVIDIA notes.',
+    supplementSources: 'Supplement Sources',
+    capacityComposition: 'Capacity Composition',
+    usable: 'usable',
+    kvBudget: 'KV Budget',
+    equation: 'Equation',
+    variables: 'Variables',
+    currentSubstitution: 'Current substitution',
+    result: 'Result',
   },
   zh_CN: {
     language: '语言',
@@ -137,6 +322,186 @@ const translations = {
     guidedReady: '引导计算已就绪',
     reopenGuide: '重新打开引导',
     dismiss: '关闭',
+    guidedIntroTitle: '引导式配置',
+    guidedIntroDesc: '可直接搜索，也可按步骤选择；详细控制始终可以一键打开。',
+    chooseModel: '选择模型',
+    chooseModelSubtitle: '先选模型家族，再选类型和规模；搜索与详细选择是快捷入口。',
+    model: '模型',
+    type: '类型',
+    params: '参数',
+    active: '激活',
+    searchModelPlaceholder: '直接输入搜索模型',
+    detailedChoice: '详细选择',
+    released: '发布日期',
+    family: '家族',
+    scale: '规模',
+    review: '确认',
+    modelSubstep1: '模型子步骤 1',
+    chooseModelFamily: '选择模型家族',
+    modelSubstep2Type: '模型子步骤 2：类型',
+    modelSubstep3Scale: '模型子步骤 3：规模',
+    options: '个选项',
+    combinationResult: '组合结果',
+    detailedModelChoice: '详细模型选择',
+    totalParamsB: '总参数量 (B)',
+    activeParamsB: '激活参数量 (B)',
+    layers: '层数',
+    chooseScaleHint: '选择规模或搜索结果后会进入硬件步骤。',
+    chooseHardware: '选择 GPU 硬件',
+    chooseHardwareSubtitle: '先选供应商，再选硬件类别，最后选择具体加速卡。',
+    gpu: 'GPU',
+    vram: '显存',
+    bandwidth: '带宽',
+    lockedModelFirst: '完成模型选择后才能选择硬件。',
+    readyHardware: '可以开始选择硬件。',
+    searchGpuPlaceholder: '直接输入搜索 GPU',
+    vendor: '供应商',
+    class: '类别',
+    card: '显卡',
+    hardwareSubstep2Class: '硬件子步骤 2：类别',
+    hardwareSubstep3Card: '硬件子步骤 3：显卡',
+    detailedHardwareChoice: '详细硬件选择',
+    supplier: '供应商',
+    architecture: '架构',
+    memoryBw: '显存带宽 (GB/s)',
+    back: '返回',
+    chooseGpuHint: '选择 GPU 后会进入参数步骤。',
+    perfParams: '性能估算参数',
+    perfParamsSubtitle: '先选估算预设，再调整精度、上下文、并发和安全余量。',
+    lockedHardwareFirst: '选择 GPU 硬件后才能调整运行时假设。',
+    readyPerf: '可以开始配置性能参数。',
+    weights: '权重',
+    kvCache: 'KV 缓存',
+    context: '上下文',
+    users: '用户',
+    gpuUnit: 'GPU',
+    preset: '预设',
+    startPoint: '起点',
+    workload: '工作负载',
+    estimationPreset: '估算预设',
+    balanced: '均衡',
+    balancedDesc: 'INT4 权重、FP8 KV、常规预留',
+    memorySaver: '节省显存',
+    memorySaverDesc: '更激进的容量余量',
+    throughputProbe: '吞吐探测',
+    throughputProbeDesc: 'FP8 权重与更稳妥的 KV',
+    longContext: '长上下文',
+    longContextDesc: '将上下文下限提高到 32K',
+    weightQuantization: '权重量化',
+    kvCachePrecision: 'KV 缓存精度',
+    concurrentUsers: '并发用户',
+    parallelGpus: '并行 GPU',
+    maxContextLength: '最大上下文长度',
+    reserveVramGb: '预留显存 (GB)',
+    currentPerfAssumptions: '当前性能假设',
+    memoryPolicy: '显存策略',
+    parallelism: '并行度',
+    stepsComplete: '步骤 1-2-3 已完成',
+    readyToCompute: '可以计算',
+    readyToComputeDesc: '模型、GPU 硬件和运行时假设都已设置。',
+    computeFinalResult: '计算最终结果',
+    setupSummary: '配置摘要',
+    nextAction: '下一步',
+    nextActionModel: '选择模型规模或搜索结果，下一步会自动打开。',
+    nextActionHardware: '选择 GPU，随后会自动打开运行时参数。',
+    nextActionRuntime: '调整假设，然后在最后一步统一计算。',
+    nextActionDone: '最终结果已在详细控制中打开。',
+    focusLayout: '焦点布局',
+    paramsLabel: '参数区',
+    workspaceLabel: '工作区',
+    auto: '自动',
+    manual: '手动',
+    shrinkParamPanel: '缩小参数面板',
+    expandParamPanel: '展开参数面板',
+    setupControls: '配置控制',
+    selectedConfiguration: '已选配置',
+    editingConfiguration: '正在编辑配置',
+    done: '完成',
+    hardware: '硬件',
+    deployment: '部署',
+    noModelSelected: '未选择模型',
+    customGpu: '自定义 GPU',
+    modelPanelDesc: '从目录选择、按家族组合，或输入自定义数值',
+    catalog: '目录',
+    structured: '结构化',
+    custom: '自定义',
+    searchModelDetailedPlaceholder: '搜索模型、家族、规模',
+    viewModelDetails: '查看模型详情',
+    modelSizeGb: '模型大小 (GB)',
+    kvHeads: 'KV 头数',
+    headDim: 'Head 维度',
+    kvSizeKbToken: 'KV 大小 (KB/Token)',
+    reset: '重置',
+    hardwarePanelDesc: '从 GPU 目录选择，或输入供应商数值规格',
+    numeric: '数值',
+    searchGpuDetailedPlaceholder: '搜索 GPU、架构、类别',
+    defaultKvQuant: '默认 KV 量化',
+    deploymentPanelDesc: '并发、上下文和显存安全余量',
+    vramUtilization: '显存利用率',
+    reserveVram: '预留显存',
+    sliderMax: '滑条上限',
+    workspace: '工作区',
+    workspaceDesc: '计算结果、公式、模型信息、硬件信息和边际提示',
+    results: '结果',
+    formulas: '公式',
+    hints: '提示',
+    estimatorViews: '估算视图',
+    guidedResultReadyDesc: '估算总显存 {total} GB，可用预算 {usable} GB。',
+    configurationIssue: '配置问题',
+    totalVramRequired: '总显存需求',
+    usableAfterReserve: 'GB 预留后可用',
+    awaitingConfiguration: '等待配置',
+    installedGpuMemory: '占已安装 GPU 显存',
+    modelWeights: '模型权重',
+    kvCacheRequest: '每请求 KV 缓存',
+    reserve: '预留',
+    utilizationCap: '利用率上限',
+    generation: '生成',
+    prompt: '预填充',
+    capacity: '容量',
+    fullSequences: '完整序列',
+    tokenBudget: 'Token 预算',
+    totalParams: '总参数量',
+    activeParams: '激活参数量',
+    nativeContext: '原生上下文',
+    customValue: '自定义',
+    attentionKv: '注意力 / KV',
+    hiddenSize: '隐藏维度',
+    kvBytesValue: '每个 KV 值字节数',
+    modelSources: '模型来源',
+    noExternalSource: '该自定义条目没有绑定外部来源。',
+    noGpuSelected: '未选择 GPU',
+    vramPerGpu: '单卡显存',
+    totalVram: '总显存',
+    runtimeDefaults: '运行时默认值',
+    kvQuant: 'KV 量化',
+    gpuCount: 'GPU 数量',
+    utilization: '利用率',
+    hardwareSources: '硬件来源',
+    weightMargin: '权重边际',
+    savedVsFp16Weights: '相对 FP16 权重节省',
+    kvMargin: 'KV 边际',
+    savedVsFp16Kv: '相对 FP16 KV 节省',
+    extraVsFp16Kv: '相对 FP16 KV 额外占用',
+    backendRisk: '后端风险',
+    clean: '无明显风险',
+    blocker: '个阻断',
+    blockers: '个阻断',
+    check: '项需确认',
+    checks: '项需确认',
+    supported: '支持',
+    partial: '部分支持',
+    unsupported: '不支持',
+    supportMatrix: '选择支持矩阵',
+    supportMatrixDesc: '容量估算来自本地公式；支持状态参考当前 vLLM/NVIDIA 说明。',
+    supplementSources: '补充来源',
+    capacityComposition: '容量构成',
+    usable: '可用',
+    kvBudget: 'KV 预算',
+    equation: '公式',
+    variables: '变量',
+    currentSubstitution: '当前代入',
+    result: '结果',
   },
 } as const;
 
@@ -705,6 +1070,59 @@ function supportStatusClass(status: SupportStatus): string {
   return 'border-slate-200 bg-slate-50 text-slate-600';
 }
 
+function localizeSupportLabel(label: string, locale: Locale): string {
+  if (locale !== 'zh_CN') return label;
+
+  const exact: Record<string, string> = {
+    'Weight quantization': '权重量化',
+    'FP16 weights': 'FP16 权重',
+    'FP8 W8A8 weights': 'FP8 W8A8 权重',
+    'INT8 W8A8 weights': 'INT8 W8A8 权重',
+    'INT4 weights': 'INT4 权重',
+    'KV cache dtype': 'KV 缓存 dtype',
+    'FP16 KV cache': 'FP16 KV 缓存',
+    'FP32 KV cache': 'FP32 KV 缓存',
+    'FP8 KV cache': 'FP8 KV 缓存',
+    'Aggressive KV below FP8': '低于 FP8 的激进 KV',
+  };
+
+  return exact[label] ?? label.replace('KV cache', 'KV 缓存').replace('weights', '权重');
+}
+
+function localizeSupportNote(row: SupportRow, locale: Locale): string {
+  if (locale !== 'zh_CN') return row.note;
+  if (row.note === 'No hardware selected.') return '未选择硬件。';
+
+  if (row.label === 'Aggressive KV below FP8') {
+    return row.status === 'Unsupported'
+      ? '本计算器可以估算显存目标，但稳定 vLLM 文档没有把 INT4/INT8 KV 缓存作为常规服务路径。'
+      : '当你在其他推理引擎或插件中试验低于 FP8 的 KV 缓存时，可把这一行作为风险提示。';
+  }
+
+  if (row.status === 'Supported') {
+    return '该选择在当前参考资料中属于支持路径；真实部署仍应按具体运行时版本验证。';
+  }
+
+  if (row.status === 'Unsupported') {
+    return '当前参考资料未把该组合列为稳定路径；容量可以估算，但不应默认它能直接运行。';
+  }
+
+  if (row.status === 'Partial') {
+    return '该选择可能可用，但通常取决于硬件代际、checkpoint 格式、kernel 和运行时版本。';
+  }
+
+  return '该组合需要结合所用推理引擎、版本和插件进一步确认。';
+}
+
+function localizeSupportRow(row: SupportRow, locale: Locale): SupportRow {
+  if (locale !== 'zh_CN') return row;
+  return {
+    ...row,
+    label: localizeSupportLabel(row.label, locale),
+    note: localizeSupportNote(row, locale),
+  };
+}
+
 function hintToneClass(tone: HintTone): string {
   if (tone === 'critical') return 'border-red-200 bg-red-50';
   if (tone === 'warning') return 'border-amber-200 bg-amber-50';
@@ -739,11 +1157,13 @@ function buildGuidanceHints(
   quant: RuntimeQuantType,
   kvQuant: KvQuantType,
   results: CalcResults | null,
-  maxLength: number
+  maxLength: number,
+  locale: Locale = 'en_US'
 ): GuidanceHint[] {
   const hints: GuidanceHint[] = [];
   if (!model || !gpu) return hints;
 
+  const zh = locale === 'zh_CN';
   const architecture = inferArchitecture(gpu);
   const vendor = hardwareVendor(gpu);
   const weightSupport = selectedWeightSupport(gpu, quant);
@@ -756,17 +1176,25 @@ function buildGuidanceHints(
 
   if (architecture === 'Pascal' && vendor === 'NVIDIA') {
     hints.push({
-      title: 'Legacy NVIDIA FP16 caveat',
-      body: 'Pascal/GTX-class cards can store half precision values, but they do not have Volta-era Tensor Cores. When kernels cannot use a fast FP16 path, practical inference may fall back toward FP32-style throughput.',
-      impact: 'Treat FP16/quantized speed estimates as optimistic; a 2x or worse penalty is plausible for unsupported kernels.',
+      title: zh ? '旧 NVIDIA FP16 注意事项' : 'Legacy NVIDIA FP16 caveat',
+      body: zh
+        ? 'Pascal/GTX 级显卡可以存储半精度值，但没有 Volta 时代引入的 Tensor Core 路径。当 kernel 无法使用快速 FP16 路径时，实际推理可能退回接近 FP32 风格吞吐。'
+        : 'Pascal/GTX-class cards can store half precision values, but they do not have Volta-era Tensor Cores. When kernels cannot use a fast FP16 path, practical inference may fall back toward FP32-style throughput.',
+      impact: zh
+        ? 'FP16/量化速度估算应视为乐观值；不支持的 kernel 出现 2x 或更差惩罚是可能的。'
+        : 'Treat FP16/quantized speed estimates as optimistic; a 2x or worse penalty is plausible for unsupported kernels.',
       tone: 'critical',
       sources: [guidanceSources.nvidiaCudaThroughput, guidanceSources.nvidiaTensorCores],
     });
   } else if (isNvidiaArchitecture(architecture) && architecture !== 'Pascal') {
     hints.push({
-      title: 'Mixed precision is not pure FP16',
-      body: 'Modern NVIDIA Tensor Core paths usually combine lower-precision inputs with wider accumulation. That is good for accuracy, but kernel availability matters more than the storage dtype shown in the calculator.',
-      impact: 'Use the support rows below before assuming a quantized checkpoint will hit the advertised hardware path.',
+      title: zh ? '混合精度并不是纯 FP16' : 'Mixed precision is not pure FP16',
+      body: zh
+        ? '现代 NVIDIA Tensor Core 路径通常把低精度输入和更宽的累加结合使用，这有利于准确性。但实际能否跑到对应硬件路径，更多取决于 kernel 是否可用，而不仅是计算器里显示的存储 dtype。'
+        : 'Modern NVIDIA Tensor Core paths usually combine lower-precision inputs with wider accumulation. That is good for accuracy, but kernel availability matters more than the storage dtype shown in the calculator.',
+      impact: zh
+        ? '在假设量化 checkpoint 可以命中标称硬件路径之前，先查看下面的支持矩阵。'
+        : 'Use the support rows below before assuming a quantized checkpoint will hit the advertised hardware path.',
       tone: 'info',
       sources: [guidanceSources.nvidiaTensorCores, guidanceSources.vllmQuantization],
     });
@@ -774,11 +1202,13 @@ function buildGuidanceHints(
 
   if (quant !== 'fp16') {
     hints.push({
-      title: `${quant.toUpperCase()} weights save VRAM`,
-      body: `The current weight setting saves about ${formatNumber(weightSaved)} GB versus an FP16 weight estimate for this model.`,
+      title: zh ? `${quant.toUpperCase()} 权重节省显存` : `${quant.toUpperCase()} weights save VRAM`,
+      body: zh
+        ? `当前权重设置相对该模型的 FP16 权重估算约节省 ${formatNumber(weightSaved)} GB。`
+        : `The current weight setting saves about ${formatNumber(weightSaved)} GB versus an FP16 weight estimate for this model.`,
       impact: weightSupport.status === 'Supported'
-        ? 'Capacity and vLLM support are aligned for this selection.'
-        : `Capacity improves, but backend status is ${weightSupport.status.toLowerCase()}: ${weightSupport.note}`,
+        ? (zh ? '容量收益与 vLLM 支持路径基本一致。' : 'Capacity and vLLM support are aligned for this selection.')
+        : (zh ? `容量会改善，但后端状态仍需确认：${localizeSupportNote(weightSupport, locale)}` : `Capacity improves, but backend status is ${weightSupport.status.toLowerCase()}: ${weightSupport.note}`),
       tone: weightSupport.status === 'Supported' ? 'good' : weightSupport.status === 'Unsupported' ? 'warning' : 'info',
       sources: weightSupport.sources,
     });
@@ -786,13 +1216,17 @@ function buildGuidanceHints(
 
   if (kvQuant !== 'fp16') {
     hints.push({
-      title: `${kvQuant.toUpperCase()} KV cache changes the margin`,
+      title: zh ? `${kvQuant.toUpperCase()} KV 缓存改变边际` : `${kvQuant.toUpperCase()} KV cache changes the margin`,
       body: kvSaved > 0
-        ? `The selected KV cache dtype saves about ${formatNumber(kvSaved)} GB per full ${formatCompact(maxLength)}-token sequence versus FP16 KV.`
-        : `The selected KV cache dtype uses about ${formatNumber(Math.abs(kvSaved))} GB more per full ${formatCompact(maxLength)}-token sequence versus FP16 KV.`,
+        ? (zh
+          ? `所选 KV 缓存 dtype 相对 FP16 KV，在每条完整 ${formatCompact(maxLength)} token 序列上约节省 ${formatNumber(kvSaved)} GB。`
+          : `The selected KV cache dtype saves about ${formatNumber(kvSaved)} GB per full ${formatCompact(maxLength)}-token sequence versus FP16 KV.`)
+        : (zh
+          ? `所选 KV 缓存 dtype 相对 FP16 KV，在每条完整 ${formatCompact(maxLength)} token 序列上额外占用约 ${formatNumber(Math.abs(kvSaved))} GB。`
+          : `The selected KV cache dtype uses about ${formatNumber(Math.abs(kvSaved))} GB more per full ${formatCompact(maxLength)}-token sequence versus FP16 KV.`),
       impact: kvSupport.status === 'Supported'
-        ? 'This is the cleanest memory-saving KV option in current vLLM docs.'
-        : kvSupport.note,
+        ? (zh ? '这是当前 vLLM 文档中较清晰的 KV 省显存路径。' : 'This is the cleanest memory-saving KV option in current vLLM docs.')
+        : localizeSupportNote(kvSupport, locale),
       tone: kvSupport.status === 'Unsupported' ? 'warning' : kvSupport.status === 'Supported' ? 'good' : 'info',
       sources: kvSupport.sources,
     });
@@ -800,9 +1234,13 @@ function buildGuidanceHints(
 
   if (kvQuant === 'fp8' && (model.headDim ?? 0) >= 256) {
     hints.push({
-      title: 'Large head dimension FP8 KV warning',
-      body: 'This model uses a 256 head dimension. vLLM’s FP8 KV-cache validation notes that large head dimensions can still regress during prefill, even when decode memory traffic improves.',
-      impact: 'Long-context decode may benefit, but prompt-heavy workloads should be benchmarked before treating FP8 KV as a free win.',
+      title: zh ? '大 head 维度的 FP8 KV 警告' : 'Large head dimension FP8 KV warning',
+      body: zh
+        ? '该模型使用 256 的 head 维度。vLLM 的 FP8 KV-cache 验证说明中提到，即使解码阶段显存流量改善，大 head 维度在预填充阶段仍可能出现回退。'
+        : 'This model uses a 256 head dimension. vLLM’s FP8 KV-cache validation notes that large head dimensions can still regress during prefill, even when decode memory traffic improves.',
+      impact: zh
+        ? '长上下文解码可能受益，但在把 FP8 KV 当作无成本收益前，应先 benchmark 预填充占比较高的工作负载。'
+        : 'Long-context decode may benefit, but prompt-heavy workloads should be benchmarked before treating FP8 KV as a free win.',
       tone: 'warning',
       sources: [guidanceSources.vllmFp8KvBlog],
     });
@@ -810,9 +1248,13 @@ function buildGuidanceHints(
 
   if (kvQuant === 'fp8' && (model.name.includes('Qwen3.5') || model.name.includes('Qwen3.6') || model.name.includes('Next'))) {
     hints.push({
-      title: 'Hybrid-attention model caution',
-      body: 'For hybrid-attention models, FP8 KV cache can have uneven benefit because some layers have bounded or specialized attention behavior.',
-      impact: 'If the runtime exposes layer skipping or calibrated scales, prefer that over a blind all-layer FP8 KV switch.',
+      title: zh ? '混合注意力模型注意事项' : 'Hybrid-attention model caution',
+      body: zh
+        ? '对于混合注意力模型，FP8 KV 缓存的收益可能不均匀，因为部分层具有 bounded 或特殊注意力行为。'
+        : 'For hybrid-attention models, FP8 KV cache can have uneven benefit because some layers have bounded or specialized attention behavior.',
+      impact: zh
+        ? '如果运行时提供层级跳过或校准 scale，优先使用这些能力，而不是盲目对所有层启用 FP8 KV。'
+        : 'If the runtime exposes layer skipping or calibrated scales, prefer that over a blind all-layer FP8 KV switch.',
       tone: 'warning',
       sources: [guidanceSources.vllmFp8KvBlog, ...(model.sources ?? (model.source ? [model.source] : []))],
     });
@@ -820,9 +1262,13 @@ function buildGuidanceHints(
 
   if (results?.error) {
     hints.push({
-      title: 'Capacity is the active blocker',
-      body: 'The selected model, context, and concurrency do not fit inside the usable VRAM budget.',
-      impact: 'First reduce context/concurrency, increase GPUs, or lower weight/KV precision. Then re-check support because the most aggressive options may not be stable on the selected runtime.',
+      title: zh ? '容量是当前阻断项' : 'Capacity is the active blocker',
+      body: zh
+        ? '当前模型、上下文和并发无法放入可用显存预算。'
+        : 'The selected model, context, and concurrency do not fit inside the usable VRAM budget.',
+      impact: zh
+        ? '优先降低上下文/并发、增加 GPU，或降低权重/KV 精度。随后重新检查支持状态，因为最激进的选项未必在所选运行时稳定。'
+        : 'First reduce context/concurrency, increase GPUs, or lower weight/KV precision. Then re-check support because the most aggressive options may not be stable on the selected runtime.',
       tone: 'critical',
       sources: [guidanceSources.vllmQuantization, guidanceSources.vllmKvCache],
     });
@@ -831,9 +1277,9 @@ function buildGuidanceHints(
   return hints;
 }
 
-function SourceLinks({ sources }: { sources: ReferenceLink[] }) {
+function SourceLinks({ locale = 'en_US', sources }: { locale?: Locale; sources: ReferenceLink[] }) {
   if (sources.length === 0) {
-    return <p className="text-sm text-slate-500">No external source is attached to this custom entry.</p>;
+    return <p className="text-sm text-slate-500">{translations[locale].noExternalSource}</p>;
   }
 
   return (
@@ -926,6 +1372,7 @@ function FormulaCard({
   equation,
   icon,
   interpretation,
+  labels,
   purpose,
   result,
   substitution,
@@ -936,6 +1383,12 @@ function FormulaCard({
   equation: string;
   icon: ReactNode;
   interpretation: string;
+  labels: {
+    equation: string;
+    variables: string;
+    currentSubstitution: string;
+    result: string;
+  };
   purpose: string;
   result: string;
   substitution: string;
@@ -953,14 +1406,14 @@ function FormulaCard({
       </div>
 
       <div className="mt-4">
-        <div className="mb-1 text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Equation</div>
+        <div className="mb-1 text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{labels.equation}</div>
         <code className="formula-code block rounded-lg bg-slate-950 p-3 text-sm text-white">
           {equation}
         </code>
       </div>
 
       <div className="mt-4">
-        <div className="mb-2 text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Variables</div>
+        <div className="mb-2 text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{labels.variables}</div>
         <div className="grid grid-cols-1 gap-2">
           {variables.map((variable) => (
             <div key={variable.name} className="rounded-lg border border-slate-200 bg-white p-2.5">
@@ -976,11 +1429,11 @@ function FormulaCard({
 
       <div className="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-[1fr_auto]">
         <div className="rounded-lg bg-slate-50 p-3">
-          <div className="mb-1 text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Current substitution</div>
+          <div className="mb-1 text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{labels.currentSubstitution}</div>
           <p className="wrap-anywhere text-sm leading-6 text-slate-700">{substitution}</p>
         </div>
         <div className="rounded-lg border border-slate-200 bg-white p-3 lg:min-w-32">
-          <div className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Result</div>
+          <div className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{labels.result}</div>
           <div className="mt-1 text-xl font-black text-slate-950">{result}</div>
         </div>
       </div>
@@ -990,7 +1443,9 @@ function FormulaCard({
   );
 }
 
-function TheoryPanel({ parallelGPUs, sources }: { parallelGPUs: number; sources: ReferenceLink[] }) {
+function TheoryPanel({ locale, parallelGPUs, sources }: { locale: Locale; parallelGPUs: number; sources: ReferenceLink[] }) {
+  const zh = locale === 'zh_CN';
+
   return (
     <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(320px,0.36fr)]">
       <section className="panel p-4 sm:p-5">
@@ -999,8 +1454,10 @@ function TheoryPanel({ parallelGPUs, sources }: { parallelGPUs: number; sources:
             <BookOpen className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="text-base font-bold text-slate-950">Theory</h2>
-            <p className="text-sm text-slate-500">What sits behind the VRAM formulas and empirical throughput priors</p>
+            <h2 className="text-base font-bold text-slate-950">{zh ? '理论' : 'Theory'}</h2>
+            <p className="text-sm text-slate-500">
+              {zh ? '显存公式与经验吞吐先验背后的计算逻辑' : 'What sits behind the VRAM formulas and empirical throughput priors'}
+            </p>
           </div>
         </div>
 
@@ -1009,9 +1466,11 @@ function TheoryPanel({ parallelGPUs, sources }: { parallelGPUs: number; sources:
             <div className="flex items-start gap-3">
               <div className="formula-icon bg-indigo-100 text-indigo-700"><BookOpen className="h-4 w-4" /></div>
               <div>
-                <h4 className="font-bold text-slate-950">Estimator Theory</h4>
+                <h4 className="font-bold text-slate-950">{zh ? '估算器理论' : 'Estimator Theory'}</h4>
                 <p className="mt-1 text-sm leading-6 text-slate-600">
-                  The calculator is a capacity-first estimator with a roofline-style performance sketch. It separates static model weights, dynamic KV cache, reserved runtime memory, prompt compute throughput, and decode memory-bandwidth throughput.
+                  {zh
+                    ? '这个计算器以容量估算为主，并叠加 roofline 风格的性能草图。它把静态模型权重、动态 KV 缓存、运行时预留、预填充计算吞吐和解码带宽吞吐分开处理。'
+                    : 'The calculator is a capacity-first estimator with a roofline-style performance sketch. It separates static model weights, dynamic KV cache, reserved runtime memory, prompt compute throughput, and decode memory-bandwidth throughput.'}
                 </p>
               </div>
             </div>
@@ -1019,46 +1478,60 @@ function TheoryPanel({ parallelGPUs, sources }: { parallelGPUs: number; sources:
 
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <div className="panel-compact p-4">
-              <h4 className="text-sm font-bold text-slate-950">Prompt path: compute bound prior</h4>
+              <h4 className="text-sm font-bold text-slate-950">{zh ? '预填充路径：计算受限先验' : 'Prompt path: compute bound prior'}</h4>
               <p className="mt-2 text-sm leading-6 text-slate-600">
-                Prompt processing is modeled as a dense-compute pass over the full parameter count. The formula starts from advertised FP16-style throughput, then divides by total model parameters and a `sqrt(2)` dampener.
+                {zh
+                  ? '预填充被近似为一次覆盖全量参数的密集计算过程。公式从标称 FP16 风格吞吐开始，再除以总参数量和一个 `sqrt(2)` 保守阻尼项。'
+                  : 'Prompt processing is modeled as a dense-compute pass over the full parameter count. The formula starts from advertised FP16-style throughput, then divides by total model parameters and a `sqrt(2)` dampener.'}
               </p>
               <code className="formula-code mt-3 block rounded-lg bg-slate-950 p-3 text-sm text-white">prompt_tok_s = fp16_tflops x 1000 x gpu_count^0.6 / (total_params_b x sqrt(2))</code>
               <p className="mt-3 text-sm leading-6 text-slate-600">
-                `sqrt(2)` is not a hardware law. It is a conservative usability factor for non-GEMM work, kernel overhead, mixed precision behavior, batching shape, and runtime scheduling. Use it as a default prior, then calibrate with benchmarks.
+                {zh
+                  ? '`sqrt(2)` 不是硬件定律，而是对非 GEMM 工作、kernel 开销、混合精度行为、batch 形状和调度损耗的保守可用性因子。它适合作为默认先验，真实部署后应使用 benchmark 校准。'
+                  : '`sqrt(2)` is not a hardware law. It is a conservative usability factor for non-GEMM work, kernel overhead, mixed precision behavior, batching shape, and runtime scheduling. Use it as a default prior, then calibrate with benchmarks.'}
               </p>
             </div>
 
             <div className="panel-compact p-4">
-              <h4 className="text-sm font-bold text-slate-950">Generation path: bandwidth bound prior</h4>
+              <h4 className="text-sm font-bold text-slate-950">{zh ? '生成路径：带宽受限先验' : 'Generation path: bandwidth bound prior'}</h4>
               <p className="mt-2 text-sm leading-6 text-slate-600">
-                Autoregressive decode is modeled as memory-bandwidth dominated because every new token repeatedly streams active weights and attention state. MoE models use active parameters rather than total parameters for this path.
+                {zh
+                  ? '自回归解码被近似为显存带宽主导，因为每生成一个新 token 都会反复流式读取激活权重和注意力状态。MoE 模型在这条路径上使用激活参数量，而不是总参数量。'
+                  : 'Autoregressive decode is modeled as memory-bandwidth dominated because every new token repeatedly streams active weights and attention state. MoE models use active parameters rather than total parameters for this path.'}
               </p>
               <code className="formula-code mt-3 block rounded-lg bg-slate-950 p-3 text-sm text-white">gen_tok_s = bandwidth_gbs x gpu_count^0.8 / (active_params_b x weight_bytes)</code>
               <p className="mt-3 text-sm leading-6 text-slate-600">
-                The `0.8` exponent is an empirical multi-GPU prior: bandwidth scaling is usually better than prompt scaling, but communication, routing, cache placement, and pipeline bubbles keep it below ideal linear scaling.
+                {zh
+                  ? '`0.8` 指数是一个多 GPU 经验先验：带宽聚合通常比预填充扩展更好，但通信、路由、缓存放置和流水线空泡会让它低于理想线性扩展。'
+                  : 'The `0.8` exponent is an empirical multi-GPU prior: bandwidth scaling is usually better than prompt scaling, but communication, routing, cache placement, and pipeline bubbles keep it below ideal linear scaling.'}
               </p>
             </div>
 
             <div className="panel-compact p-4">
-              <h4 className="text-sm font-bold text-slate-950">Why prompt uses `0.6` and decode uses `0.8`</h4>
+              <h4 className="text-sm font-bold text-slate-950">{zh ? '为什么预填充用 `0.6`，解码用 `0.8`' : 'Why prompt uses `0.6` and decode uses `0.8`'}</h4>
               <p className="mt-2 text-sm leading-6 text-slate-600">
-                Multi-GPU serving does not scale as `gpu_count^1.0` unless the workload, runtime, topology, and parallel strategy line up unusually well. Prompt prefill has heavier synchronization and larger activation movement, so the calculator uses `0.6`. Decode is closer to a bandwidth aggregation problem, so it uses `0.8`.
+                {zh
+                  ? '多 GPU 推理通常不会自然达到 `gpu_count^1.0`，除非工作负载、运行时、拓扑和并行策略都非常匹配。预填充同步更多、激活移动更重，所以这里使用 `0.6`；解码更接近带宽聚合问题，所以使用 `0.8`。'
+                  : 'Multi-GPU serving does not scale as `gpu_count^1.0` unless the workload, runtime, topology, and parallel strategy line up unusually well. Prompt prefill has heavier synchronization and larger activation movement, so the calculator uses `0.6`. Decode is closer to a bandwidth aggregation problem, so it uses `0.8`.'}
               </p>
               <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                <StatTile label="Prompt prior" value={`x${Math.pow(parallelGPUs, 0.6).toFixed(2)}`} detail={`${parallelGPUs} GPU ^ 0.6`} />
-                <StatTile label="Decode prior" value={`x${Math.pow(parallelGPUs, 0.8).toFixed(2)}`} detail={`${parallelGPUs} GPU ^ 0.8`} />
+                <StatTile label={zh ? '预填充先验' : 'Prompt prior'} value={`x${Math.pow(parallelGPUs, 0.6).toFixed(2)}`} detail={`${parallelGPUs} GPU ^ 0.6`} />
+                <StatTile label={zh ? '解码先验' : 'Decode prior'} value={`x${Math.pow(parallelGPUs, 0.8).toFixed(2)}`} detail={`${parallelGPUs} GPU ^ 0.8`} />
               </div>
             </div>
 
             <div className="panel-compact p-4">
-              <h4 className="text-sm font-bold text-slate-950">Capacity derivation</h4>
+              <h4 className="text-sm font-bold text-slate-950">{zh ? '容量推导' : 'Capacity derivation'}</h4>
               <p className="mt-2 text-sm leading-6 text-slate-600">
-                Memory is treated as weights plus KV cache plus reserve. Weight memory depends on total parameters and storage dtype. KV cache depends on layers, KV heads, head dimension, two tensors for keys and values, context length, dtype, and concurrent active sequences.
+                {zh
+                  ? '显存被拆成权重、KV 缓存和预留。权重显存取决于总参数量与存储 dtype；KV 缓存取决于层数、KV 头数、head 维度、key/value 两份张量、上下文长度、dtype 和并发活跃序列。'
+                  : 'Memory is treated as weights plus KV cache plus reserve. Weight memory depends on total parameters and storage dtype. KV cache depends on layers, KV heads, head dimension, two tensors for keys and values, context length, dtype, and concurrent active sequences.'}
               </p>
               <code className="formula-code mt-3 block rounded-lg bg-slate-950 p-3 text-sm text-white">total_vram = weights + kv_cache_per_request x users + reserve</code>
               <p className="mt-3 text-sm leading-6 text-slate-600">
-                This is intentionally pessimistic for bursty traffic and optimistic for fragmented runtimes. The reserve term is there to absorb allocator behavior, CUDA graphs, temporary buffers, and runtime bookkeeping.
+                {zh
+                  ? '这个表达对突发流量偏保守，对碎片化运行时可能偏乐观。预留项用于吸收分配器行为、CUDA graph、临时 buffer 和运行时 bookkeeping。'
+                  : 'This is intentionally pessimistic for bursty traffic and optimistic for fragmented runtimes. The reserve term is there to absorb allocator behavior, CUDA graphs, temporary buffers, and runtime bookkeeping.'}
               </p>
             </div>
           </div>
@@ -1067,14 +1540,16 @@ function TheoryPanel({ parallelGPUs, sources }: { parallelGPUs: number; sources:
 
       <aside className="space-y-4">
         <section className="panel p-4">
-          <h3 className="text-sm font-bold text-slate-950">How to Use This</h3>
+          <h3 className="text-sm font-bold text-slate-950">{zh ? '如何使用这些数值' : 'How to Use This'}</h3>
           <p className="mt-2 text-sm leading-6 text-slate-600">
-            Treat these constants as planning defaults. After a real benchmark, adjust effective TFLOPS, bandwidth, utilization, or scaling exponents to match your runtime.
+            {zh
+              ? '这些常数应被看作规划默认值。拿到真实 benchmark 后，可以调整有效 TFLOPS、带宽、利用率或扩展指数，让估算贴近你的运行时。'
+              : 'Treat these constants as planning defaults. After a real benchmark, adjust effective TFLOPS, bandwidth, utilization, or scaling exponents to match your runtime.'}
           </p>
         </section>
         <section className="panel p-4">
-          <h3 className="mb-3 text-sm font-bold text-slate-950">Theory Sources</h3>
-          <SourceLinks sources={sources} />
+          <h3 className="mb-3 text-sm font-bold text-slate-950">{zh ? '理论来源' : 'Theory Sources'}</h3>
+          <SourceLinks locale={locale} sources={sources} />
         </section>
       </aside>
     </div>
@@ -1226,12 +1701,11 @@ function DetailSummaryCard({
   );
 }
 
-export default function LLMVRAMCalculator() {
+export default function LLMVRAMCalculator({ locale = 'en_US', onLocaleChange }: LLMVRAMCalculatorProps) {
   const defaultCard = gpuCards.find((card) => card.name === 'NVIDIA RTX3090 24G') ?? gpuCards[0];
   const defaultModel = modelDefs.find((model) => model.name === 'Qwen3-8B') ?? modelDefs[0];
   const defaultMeta = modelMeta(defaultModel);
 
-  const [locale, setLocale] = useState<Locale>('en_US');
   const [selectedCard, setSelectedCard] = useState<GPUCard | null>(defaultCard);
   const [selectedModel, setSelectedModel] = useState<ModelDef | null>(defaultModel);
   const [quantType, setQuantType] = useState<RuntimeQuantType>('int4');
@@ -1280,6 +1754,7 @@ export default function LLMVRAMCalculator() {
   const [modelSizeUserModified, setModelSizeUserModified] = useState<boolean>(false);
   const [customKvQuantType, setCustomKvQuantType] = useState<KvQuantType>('fp8');
   const t = (key: TranslationKey) => translations[locale][key] ?? translations.en_US[key];
+  const isZh = locale === 'zh_CN';
 
   const modelCatalog = useMemo(() => modelDefs.map((model) => ({ model, meta: modelMeta(model) })), []);
   const modelFamilies = useMemo(() => unique(modelCatalog.map((item) => item.meta.family)), [modelCatalog]);
@@ -1347,7 +1822,7 @@ export default function LLMVRAMCalculator() {
     layers: customLayers,
     numKVHeads: customNumKVHeads,
     headDim: customHeadDim,
-    sourceNote: 'Custom values entered in the calculator.',
+    sourceNote: isZh ? '计算器中输入的自定义模型数值。' : 'Custom values entered in the calculator.',
   }), [
     customActiveParamsB,
     customHeadDim,
@@ -1356,6 +1831,7 @@ export default function LLMVRAMCalculator() {
     customNumKVHeads,
     customPerKVsizeFp8,
     customTotalParamsB,
+    isZh,
     quantType,
   ]);
 
@@ -1366,8 +1842,8 @@ export default function LLMVRAMCalculator() {
     processPower: { fp16: customProcessPowerFP16 },
     kvQuantType: customKvQuantType,
     architecture: customArchitecture,
-    sourceNote: 'Custom numeric hardware profile entered in the calculator.',
-  }), [customArchitecture, customKvQuantType, customMemoryBandwidthGBs, customProcessPowerFP16, customSupplier, customVramGB]);
+    sourceNote: isZh ? '计算器中输入的自定义硬件数值配置。' : 'Custom numeric hardware profile entered in the calculator.',
+  }), [customArchitecture, customKvQuantType, customMemoryBandwidthGBs, customProcessPowerFP16, customSupplier, customVramGB, isZh]);
 
   const effectiveModel = useCustomModel ? customModel : selectedModel;
   const effectiveCard = useCustomGPU ? customCard : selectedCard;
@@ -1390,8 +1866,8 @@ export default function LLMVRAMCalculator() {
     [effectiveCard, effectiveModel, kvQuantType, quantType]
   );
   const guidanceHints = useMemo(
-    () => buildGuidanceHints(effectiveModel, effectiveCard, quantType, kvQuantType, results, maxLength),
-    [effectiveCard, effectiveModel, kvQuantType, maxLength, quantType, results]
+    () => buildGuidanceHints(effectiveModel, effectiveCard, quantType, kvQuantType, results, maxLength, locale),
+    [effectiveCard, effectiveModel, kvQuantType, locale, maxLength, quantType, results]
   );
   const guidanceSourceLinks = useMemo(
     () => mergeSources(
@@ -1406,73 +1882,88 @@ export default function LLMVRAMCalculator() {
   const currentKvSaving = fp16KvVram - (results?.kvCacheVram ?? 0);
   const unsupportedSupportCount = supportRows.filter((row) => row.status === 'Unsupported').length;
   const partialSupportCount = supportRows.filter((row) => row.status === 'Partial' || row.status === 'Check').length;
-  const supportRiskLabel = unsupportedSupportCount > 0 ? `${unsupportedSupportCount} blocker${unsupportedSupportCount > 1 ? 's' : ''}` : partialSupportCount > 0 ? `${partialSupportCount} check${partialSupportCount > 1 ? 's' : ''}` : 'Clean';
-  const awqOverhead = quantType === 'int4' && effectiveModel?.awqGroup ? ` + 3/${effectiveModel.awqGroup} byte overhead` : '';
+  const supportRiskLabel = unsupportedSupportCount > 0
+    ? `${unsupportedSupportCount} ${t(unsupportedSupportCount > 1 ? 'blockers' : 'blocker')}`
+    : partialSupportCount > 0
+      ? `${partialSupportCount} ${t(partialSupportCount > 1 ? 'checks' : 'check')}`
+      : t('clean');
+  const byteUnit = isZh ? '字节' : 'byte';
+  const awqOverhead = quantType === 'int4' && effectiveModel?.awqGroup ? ` + 3/${effectiveModel.awqGroup} ${byteUnit}${isZh ? ' 开销' : ' overhead'}` : '';
   const currentReserve = results?.reservedVram ?? Math.max(totalGpuVram * (1 - vramUtilProportion), minReserveVramGB);
   const formulaCards = [
     {
-      title: 'Model Weight Memory',
-      purpose: 'Estimates the static VRAM needed to keep one copy of the model weights loaded.',
+      title: isZh ? '模型权重显存' : 'Model Weight Memory',
+      purpose: isZh ? '估算加载一份模型权重所需的静态显存。' : 'Estimates the static VRAM needed to keep one copy of the model weights loaded.',
       equation: 'weight_vram_gb = total_params_b x (bytes_per_param + quant_overhead)',
       icon: <HardDrive className="h-4 w-4" />,
       accentClass: 'bg-blue-100 text-blue-700',
       variables: [
-        { name: 'total_params_b', value: `${effectiveModel?.totalParamsB ?? 0}B`, description: 'Published total parameter count, including inactive experts for MoE models.' },
-        { name: 'bytes_per_param', value: `${quantByteValue} byte`, description: `Storage cost of the selected ${quantType.toUpperCase()} weight format.` },
-        { name: 'quant_overhead', value: quantType === 'int4' && effectiveModel?.awqGroup ? `3/${effectiveModel.awqGroup} byte` : '0 byte', description: 'Extra scale or zero-point storage used by grouped INT4 estimates.' },
+        { name: 'total_params_b', value: `${effectiveModel?.totalParamsB ?? 0}B`, description: isZh ? '公开的总参数量，MoE 模型包含未激活专家。' : 'Published total parameter count, including inactive experts for MoE models.' },
+        { name: 'bytes_per_param', value: `${quantByteValue} ${byteUnit}`, description: isZh ? `所选 ${quantType.toUpperCase()} 权重格式的存储成本。` : `Storage cost of the selected ${quantType.toUpperCase()} weight format.` },
+        { name: 'quant_overhead', value: quantType === 'int4' && effectiveModel?.awqGroup ? `3/${effectiveModel.awqGroup} ${byteUnit}` : `0 ${byteUnit}`, description: isZh ? '分组 INT4 估算中 scale 或 zero-point 的额外存储。' : 'Extra scale or zero-point storage used by grouped INT4 estimates.' },
       ],
-      substitution: `${effectiveModel?.totalParamsB ?? 0}B x (${quantByteValue} byte${awqOverhead})`,
+      substitution: `${effectiveModel?.totalParamsB ?? 0}B x (${quantByteValue} ${byteUnit}${awqOverhead})`,
       result: `${formatNumber(results?.modelVram ?? 0)} GB`,
-      interpretation: 'This is paid once per loaded model replica. Lower weight precision mainly improves the room left for KV cache and larger contexts.',
+      interpretation: isZh
+        ? '这是每个已加载模型副本都会支付一次的成本。更低权重精度主要会给 KV 缓存和更长上下文留下更多空间。'
+        : 'This is paid once per loaded model replica. Lower weight precision mainly improves the room left for KV cache and larger contexts.',
     },
     {
-      title: 'KV Cache Memory',
-      purpose: 'Estimates the memory consumed by one full-length request cache for attention keys and values.',
+      title: isZh ? 'KV 缓存显存' : 'KV Cache Memory',
+      purpose: isZh ? '估算单个满长度请求中 attention key/value 缓存消耗的显存。' : 'Estimates the memory consumed by one full-length request cache for attention keys and values.',
       equation: 'kv_cache_gb = layers x kv_heads x head_dim x 2 x context_tokens x kv_bytes / 2^30',
       icon: <Server className="h-4 w-4" />,
       accentClass: 'bg-green-100 text-green-700',
       variables: [
-        { name: 'layers', value: `${effectiveModel?.layers ?? 0}`, description: 'Number of transformer blocks that store attention cache.' },
-        { name: 'kv_heads', value: `${effectiveModel?.numKVHeads ?? 0}`, description: 'Key/value head count after GQA/MQA sharing.' },
-        { name: 'head_dim', value: `${effectiveModel?.headDim ?? 0}`, description: 'Width of each KV head.' },
-        { name: 'context_tokens', value: formatCompact(maxLength), description: 'Maximum tokens retained for one request.' },
-        { name: 'kv_bytes', value: `${kvByteValue} byte`, description: `Bytes per KV value for ${kvQuantType.toUpperCase()} cache storage.` },
+        { name: 'layers', value: `${effectiveModel?.layers ?? 0}`, description: isZh ? '需要保存 attention cache 的 transformer block 数量。' : 'Number of transformer blocks that store attention cache.' },
+        { name: 'kv_heads', value: `${effectiveModel?.numKVHeads ?? 0}`, description: isZh ? '经过 GQA/MQA 共享后的 key/value 头数。' : 'Key/value head count after GQA/MQA sharing.' },
+        { name: 'head_dim', value: `${effectiveModel?.headDim ?? 0}`, description: isZh ? '每个 KV head 的宽度。' : 'Width of each KV head.' },
+        { name: 'context_tokens', value: formatCompact(maxLength), description: isZh ? '单个请求保留的最大 token 数。' : 'Maximum tokens retained for one request.' },
+        { name: 'kv_bytes', value: `${kvByteValue} ${byteUnit}`, description: isZh ? `${kvQuantType.toUpperCase()} KV 缓存中每个值的字节数。` : `Bytes per KV value for ${kvQuantType.toUpperCase()} cache storage.` },
       ],
       substitution: `${effectiveModel?.layers ?? 0} x ${effectiveModel?.numKVHeads ?? 0} x ${effectiveModel?.headDim ?? 0} x 2 x ${maxLength.toLocaleString()} x ${kvByteValue} / 2^30`,
       result: `${formatNumber(results?.kvCacheVram ?? 0)} GB`,
-      interpretation: 'This grows linearly with context length and active sequences. It is usually the first place where long-context serving runs out of margin.',
+      interpretation: isZh
+        ? '它会随上下文长度和活跃序列数线性增长，通常是长上下文服务最先耗尽余量的位置。'
+        : 'This grows linearly with context length and active sequences. It is usually the first place where long-context serving runs out of margin.',
     },
     {
-      title: 'Usable VRAM Budget',
-      purpose: 'Converts installed GPU memory into the portion available for model weights and KV cache after safety reserve.',
+      title: isZh ? '可用显存预算' : 'Usable VRAM Budget',
+      purpose: isZh ? '把已安装 GPU 显存换算为扣除安全预留后可用于权重和 KV 缓存的部分。' : 'Converts installed GPU memory into the portion available for model weights and KV cache after safety reserve.',
       equation: 'usable_vram_gb = gpu_vram x gpu_count - max(total_vram x (1 - utilization), reserve_gb)',
       icon: <Gauge className="h-4 w-4" />,
       accentClass: 'bg-indigo-100 text-indigo-700',
       variables: [
-        { name: 'gpu_vram', value: `${effectiveCard?.vramGb ?? 0} GB`, description: 'Memory capacity on one selected accelerator.' },
-        { name: 'gpu_count', value: `${parallelGPUs}`, description: 'Parallel devices counted as one aggregate serving pool in this estimate.' },
-        { name: 'utilization', value: `${Math.round(vramUtilProportion * 100)}%`, description: 'The maximum fraction of total VRAM allowed for the workload.' },
-        { name: 'reserve_gb', value: `${formatNumber(minReserveVramGB)} GB`, description: 'Minimum fixed headroom for runtime buffers, fragmentation, and safety margin.' },
+        { name: 'gpu_vram', value: `${effectiveCard?.vramGb ?? 0} GB`, description: isZh ? '所选单张加速卡的显存容量。' : 'Memory capacity on one selected accelerator.' },
+        { name: 'gpu_count', value: `${parallelGPUs}`, description: isZh ? '本估算中合并为一个服务池的并行设备数量。' : 'Parallel devices counted as one aggregate serving pool in this estimate.' },
+        { name: 'utilization', value: `${Math.round(vramUtilProportion * 100)}%`, description: isZh ? '允许工作负载使用的总显存最大比例。' : 'The maximum fraction of total VRAM allowed for the workload.' },
+        { name: 'reserve_gb', value: `${formatNumber(minReserveVramGB)} GB`, description: isZh ? '为 runtime buffer、碎片和安全余量保留的固定下限。' : 'Minimum fixed headroom for runtime buffers, fragmentation, and safety margin.' },
       ],
       substitution: `${effectiveCard?.vramGb ?? 0} GB x ${parallelGPUs} - max(${formatNumber(totalGpuVram)} GB x ${formatNumber(1 - vramUtilProportion)}, ${formatNumber(minReserveVramGB)} GB)`,
       result: `${formatNumber(results?.usableVram ?? 0)} GB`,
-      interpretation: `Current reserve resolves to ${formatNumber(currentReserve)} GB. Raising utilization increases apparent capacity, but also raises OOM risk.`,
+      interpretation: isZh
+        ? `当前预留解析为 ${formatNumber(currentReserve)} GB。提高利用率会增加表面容量，但也会提高 OOM 风险。`
+        : `Current reserve resolves to ${formatNumber(currentReserve)} GB. Raising utilization increases apparent capacity, but also raises OOM risk.`,
     },
     {
-      title: 'Token Throughput',
-      purpose: 'Gives a coarse split between prompt compute throughput and generation bandwidth throughput.',
+      title: isZh ? 'Token 吞吐' : 'Token Throughput',
+      purpose: isZh ? '粗略拆分预填充计算吞吐与生成带宽吞吐。' : 'Gives a coarse split between prompt compute throughput and generation bandwidth throughput.',
       equation: 'prompt_tok_s = fp16_tflops x 1000 x gpu_count^0.6 / (total_params_b x sqrt(2))\ngen_tok_s = bandwidth_gbs x gpu_count^0.8 / (active_params_b x weight_bytes)',
       icon: <Zap className="h-4 w-4" />,
       accentClass: 'bg-amber-100 text-amber-700',
       variables: [
-        { name: 'fp16_tflops', value: `${formatNumber(effectiveCard?.processPower.fp16 ?? 0)} TFLOPS`, description: 'Dense FP16-style compute proxy used for prompt processing.' },
-        { name: 'bandwidth_gbs', value: `${formatNumber(effectiveCard?.memoryBandwidthGBs ?? 0, 0)} GB/s`, description: 'Memory bandwidth proxy used for autoregressive generation.' },
-        { name: 'active_params_b', value: `${effectiveModel?.activeParamsB ?? 0}B`, description: 'Parameters touched per generated token; smaller than total params for MoE.' },
-        { name: 'weight_bytes', value: `${quantByteValue} byte`, description: 'Selected weight precision cost used in the bandwidth estimate.' },
+        { name: 'fp16_tflops', value: `${formatNumber(effectiveCard?.processPower.fp16 ?? 0)} TFLOPS`, description: isZh ? '用于预填充处理的密集 FP16 风格计算代理值。' : 'Dense FP16-style compute proxy used for prompt processing.' },
+        { name: 'bandwidth_gbs', value: `${formatNumber(effectiveCard?.memoryBandwidthGBs ?? 0, 0)} GB/s`, description: isZh ? '用于自回归生成的显存带宽代理值。' : 'Memory bandwidth proxy used for autoregressive generation.' },
+        { name: 'active_params_b', value: `${effectiveModel?.activeParamsB ?? 0}B`, description: isZh ? '每个生成 token 触达的参数量；MoE 下小于总参数量。' : 'Parameters touched per generated token; smaller than total params for MoE.' },
+        { name: 'weight_bytes', value: `${quantByteValue} ${byteUnit}`, description: isZh ? '带宽估算中使用的所选权重精度成本。' : 'Selected weight precision cost used in the bandwidth estimate.' },
       ],
-      substitution: `prompt: ${formatNumber(effectiveCard?.processPower.fp16 ?? 0)} x 1000 x ${parallelGPUs}^0.6 / (${effectiveModel?.totalParamsB ?? 0} x sqrt(2)); generation: ${formatNumber(effectiveCard?.memoryBandwidthGBs ?? 0, 0)} x ${parallelGPUs}^0.8 / (${effectiveModel?.activeParamsB ?? 0} x ${quantByteValue})`,
-      result: `${formatNumber(results?.genSpeed ?? 0, 0)} gen / ${formatNumber(results?.promptSpeed ?? 0, 0)} prompt tok/s`,
-      interpretation: 'This is an order-of-magnitude serving estimate. Kernel support, batching, communication, and quantization backend can move real throughput substantially.',
+      substitution: `${isZh ? '预填充' : 'prompt'}: ${formatNumber(effectiveCard?.processPower.fp16 ?? 0)} x 1000 x ${parallelGPUs}^0.6 / (${effectiveModel?.totalParamsB ?? 0} x sqrt(2)); ${isZh ? '生成' : 'generation'}: ${formatNumber(effectiveCard?.memoryBandwidthGBs ?? 0, 0)} x ${parallelGPUs}^0.8 / (${effectiveModel?.activeParamsB ?? 0} x ${quantByteValue})`,
+      result: isZh
+        ? `${formatNumber(results?.genSpeed ?? 0, 0)} 生成 / ${formatNumber(results?.promptSpeed ?? 0, 0)} 预填充 tok/s`
+        : `${formatNumber(results?.genSpeed ?? 0, 0)} gen / ${formatNumber(results?.promptSpeed ?? 0, 0)} prompt tok/s`,
+      interpretation: isZh
+        ? '这是数量级级别的服务估算。Kernel 支持、batching、通信和量化后端都可能显著改变真实吞吐。'
+        : 'This is an order-of-magnitude serving estimate. Kernel support, batching, communication, and quantization backend can move real throughput substantially.',
     },
   ];
   const modelStageOrder: GuideModelStage[] = ['family', 'variant', 'scale', 'review'];
@@ -1800,7 +2291,7 @@ export default function LLMVRAMCalculator() {
                 className="bg-transparent text-sm font-semibold outline-none"
                 value={locale}
                 aria-label={t('language')}
-                onChange={(event) => setLocale(event.target.value as Locale)}
+                onChange={(event) => onLocaleChange?.(event.target.value as Locale)}
               >
                 <option value="en_US">en_US</option>
                 <option value="zh_CN">zh_CN</option>
@@ -1826,12 +2317,12 @@ export default function LLMVRAMCalculator() {
           <StatTile
             label={t('selectedModel')}
             value={effectiveModel?.name ?? t('none')}
-            detail={effectiveModelMeta ? `${effectiveModelMeta.variant}, ${effectiveModel?.totalParamsB}B total, ${effectiveModelRelease}` : undefined}
+            detail={effectiveModelMeta ? `${effectiveModelMeta.variant}, ${effectiveModel?.totalParamsB}B ${isZh ? '总参数' : 'total'}, ${effectiveModelRelease}` : undefined}
           />
           <StatTile
             label={t('selectedHardware')}
             value={effectiveCard ? stripVendor(effectiveCard.name) : t('none')}
-            detail={effectiveCard ? `${inferArchitecture(effectiveCard)}, ${formatNumber(totalGpuVram)} GB total, ${effectiveGpuRelease}` : undefined}
+            detail={effectiveCard ? `${inferArchitecture(effectiveCard)}, ${formatNumber(totalGpuVram)} GB ${isZh ? '总计' : 'total'}, ${effectiveGpuRelease}` : undefined}
           />
           <StatTile
             label={t('vramEstimate')}
@@ -1869,7 +2360,11 @@ export default function LLMVRAMCalculator() {
             <div>
               <div className="text-sm font-bold text-emerald-950">{t('guidedReady')}</div>
               <p className="mt-1 text-sm text-emerald-700">
-                {results?.error ? results.error : `Estimated ${results?.totalVram.toFixed(1) ?? '0.0'} GB VRAM, ${formatNumber(results?.usableVram ?? 0)} GB usable budget.`}
+                {results?.error
+                  ? results.error
+                  : t('guidedResultReadyDesc')
+                    .replace('{total}', results?.totalVram.toFixed(1) ?? '0.0')
+                    .replace('{usable}', formatNumber(results?.usableVram ?? 0))}
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -1885,15 +2380,15 @@ export default function LLMVRAMCalculator() {
       )}
 
       {entryMode === 'theory' ? (
-        <TheoryPanel parallelGPUs={parallelGPUs} sources={theorySources} />
+        <TheoryPanel locale={locale} parallelGPUs={parallelGPUs} sources={theorySources} />
       ) : entryMode === 'guided' ? (
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,0.86fr)_minmax(340px,0.44fr)]">
           <div className="space-y-4">
             <section className="panel p-4 sm:p-5">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-lg font-black text-slate-950">Guided Setup</h2>
-                  <p className="mt-1 text-sm text-slate-500">Search directly, or use staged choices. Detailed controls stay one click away.</p>
+                  <h2 className="text-lg font-black text-slate-950">{t('guidedIntroTitle')}</h2>
+                  <p className="mt-1 text-sm text-slate-500">{t('guidedIntroDesc')}</p>
                 </div>
                 <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
                   {[1, 2, 3, 4].map((step) => (
@@ -1911,9 +2406,9 @@ export default function LLMVRAMCalculator() {
               complete={guideCompletedThrough >= 1 && guideStep !== 1}
               onEdit={() => setGuideStep(1)}
               step={1}
-              title="Choose model"
-              subtitle="Start with family, then type, then scale. Search and detailed choice are optional shortcuts."
-              summary={<div className="grid grid-cols-1 gap-2 sm:grid-cols-3"><StatTile label="Model" value={effectiveModel?.name ?? 'None'} detail={effectiveModelRelease} /><StatTile label="Type" value={effectiveModelMeta?.variant ?? 'Custom'} /><StatTile label="Params" value={`${effectiveModel?.totalParamsB ?? 0}B`} detail={`${effectiveModel?.activeParamsB ?? 0}B active`} /></div>}
+              title={t('chooseModel')}
+              subtitle={t('chooseModelSubtitle')}
+              summary={<div className="grid grid-cols-1 gap-2 sm:grid-cols-3"><StatTile label={t('model')} value={effectiveModel?.name ?? t('none')} detail={effectiveModelRelease} /><StatTile label={t('type')} value={effectiveModelMeta?.variant ?? 'Custom'} /><StatTile label={t('params')} value={`${effectiveModel?.totalParamsB ?? 0}B`} detail={`${effectiveModel?.activeParamsB ?? 0}B ${t('active')}`} /></div>}
             >
               <div className="space-y-4">
                 <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_auto]">
@@ -1922,7 +2417,7 @@ export default function LLMVRAMCalculator() {
                     <input
                       value={modelQuery}
                       onChange={(event) => setModelQuery(event.target.value)}
-                      placeholder="Type to search a model directly"
+                      placeholder={t('searchModelPlaceholder')}
                       className="w-full bg-transparent text-sm focus:outline-none"
                     />
                   </label>
@@ -1932,7 +2427,7 @@ export default function LLMVRAMCalculator() {
                     onClick={() => setShowGuideModelDetailed((value) => !value)}
                   >
                     <Settings className="h-4 w-4" />
-                    Detailed choice
+                    {t('detailedChoice')}
                   </button>
                 </div>
 
@@ -1955,7 +2450,7 @@ export default function LLMVRAMCalculator() {
                         <div className="flex items-start justify-between gap-3">
                           <div className="min-w-0">
                             <div className="wrap-anywhere text-sm font-bold leading-snug text-slate-950">{model.name}</div>
-                            <div className="mt-1 text-xs text-slate-500">{meta.family} / {meta.variant} / Released {formatReleaseDate(model.releaseDate)}</div>
+                            <div className="mt-1 text-xs text-slate-500">{meta.family} / {meta.variant} / {t('released')} {formatReleaseDate(model.releaseDate)}</div>
                           </div>
                           <span className="rounded-full px-2 py-1 text-xs font-semibold text-white" style={{ backgroundColor: getModelColor(model.name) }}>{meta.scale}</span>
                         </div>
@@ -1968,18 +2463,18 @@ export default function LLMVRAMCalculator() {
                   <div className="space-y-4">
                     <SubstepRail
                       items={[
-                        { label: 'Family', value: modelFamily, active: guideModelStage === 'family', complete: modelStageIndex > 0, onClick: () => setGuideModelStage('family') },
-                        { label: 'Type', value: modelVariant, active: guideModelStage === 'variant', complete: modelStageIndex > 1, locked: modelStageIndex < 1, onClick: () => setGuideModelStage('variant') },
-                        { label: 'Scale', value: modelScale, active: guideModelStage === 'scale', complete: modelStageIndex > 2, locked: modelStageIndex < 2, onClick: () => setGuideModelStage('scale') },
-                        { label: 'Review', value: effectiveModel?.name, active: guideModelStage === 'review', complete: false, locked: modelStageIndex < 3, onClick: () => setGuideModelStage('review') },
+                        { label: t('family'), value: modelFamily, active: guideModelStage === 'family', complete: modelStageIndex > 0, onClick: () => setGuideModelStage('family') },
+                        { label: t('type'), value: modelVariant, active: guideModelStage === 'variant', complete: modelStageIndex > 1, locked: modelStageIndex < 1, onClick: () => setGuideModelStage('variant') },
+                        { label: t('scale'), value: modelScale, active: guideModelStage === 'scale', complete: modelStageIndex > 2, locked: modelStageIndex < 2, onClick: () => setGuideModelStage('scale') },
+                        { label: t('review'), value: effectiveModel?.name, active: guideModelStage === 'review', complete: false, locked: modelStageIndex < 3, onClick: () => setGuideModelStage('review') },
                       ]}
                     />
 
                     {guideModelStage === 'family' && (
                       <div className="rounded-xl border border-slate-200 bg-white p-4">
                         <div className="mb-3">
-                          <div className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Model substep 1</div>
-                          <h4 className="text-sm font-bold text-slate-950">Choose model family</h4>
+                          <div className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{t('modelSubstep1')}</div>
+                          <h4 className="text-sm font-bold text-slate-950">{t('chooseModelFamily')}</h4>
                         </div>
                         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                           {modelFamilies.map((family) => (
@@ -1988,7 +2483,7 @@ export default function LLMVRAMCalculator() {
                                 <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: getModelColor(family) }} />
                                 {family}
                               </div>
-                              <div className="mt-1 text-xs text-slate-500">{modelCatalog.filter((item) => item.meta.family === family).length} options</div>
+                              <div className="mt-1 text-xs text-slate-500">{modelCatalog.filter((item) => item.meta.family === family).length} {t('options')}</div>
                             </button>
                           ))}
                         </div>
@@ -2002,7 +2497,7 @@ export default function LLMVRAMCalculator() {
                             <span className="h-2 w-2 rounded-full" style={{ backgroundColor: getModelColor(modelFamily) }} />
                             {modelFamily}
                           </span>
-                          <span className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Model substep 2: type</span>
+                          <span className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{t('modelSubstep2Type')}</span>
                         </div>
                         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                           {modelVariants.map((variant) => (
@@ -2028,7 +2523,7 @@ export default function LLMVRAMCalculator() {
                             <span className="h-2 w-2 rounded-full" style={{ backgroundColor: getModelVariantColor(modelVariant) }} />
                             {modelVariant}
                           </span>
-                          <span className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Model substep 3: scale</span>
+                          <span className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{t('modelSubstep3Scale')}</span>
                         </div>
                         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                           {modelScales.map((scale) => {
@@ -2048,11 +2543,11 @@ export default function LLMVRAMCalculator() {
 
                     {guideModelStage === 'review' && (
                       <div className="rounded-xl border border-indigo-200 bg-indigo-50 p-4">
-                        <div className="text-xs font-semibold uppercase tracking-[0.08em] text-indigo-700">Combination result</div>
+                        <div className="text-xs font-semibold uppercase tracking-[0.08em] text-indigo-700">{t('combinationResult')}</div>
                         <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-3">
-                          <StatTile label="Model" value={effectiveModel?.name ?? 'None'} detail={effectiveModelRelease} />
-                          <StatTile label="Type" value={effectiveModelMeta?.variant ?? 'Custom'} detail={effectiveModelMeta?.family} />
-                          <StatTile label="Scale" value={effectiveModelMeta?.scale ?? 'Custom'} detail={`${effectiveModel?.totalParamsB ?? 0}B total`} />
+                          <StatTile label={t('model')} value={effectiveModel?.name ?? t('none')} detail={effectiveModelRelease} />
+                          <StatTile label={t('type')} value={effectiveModelMeta?.variant ?? 'Custom'} detail={effectiveModelMeta?.family} />
+                          <StatTile label={t('scale')} value={effectiveModelMeta?.scale ?? 'Custom'} detail={`${effectiveModel?.totalParamsB ?? 0}B total`} />
                         </div>
                       </div>
                     )}
@@ -2061,20 +2556,20 @@ export default function LLMVRAMCalculator() {
 
                 {showGuideModelDetailed && (
                   <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                    <div className="mb-3 text-sm font-bold text-slate-950">Detailed model choice</div>
+                    <div className="mb-3 text-sm font-bold text-slate-950">{t('detailedModelChoice')}</div>
                     <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-                      <label><span className="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Family</span><select value={modelFamily} onChange={(event) => selectStructuredModel(event.target.value, modelVariant, modelScale)} className="select select-bordered w-full text-sm">{modelFamilies.map((family) => <option key={family} value={family}>{family}</option>)}</select></label>
-                      <label><span className="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Type</span><select value={modelVariant} onChange={(event) => selectStructuredModel(modelFamily, event.target.value, modelScale)} className="select select-bordered w-full text-sm">{modelVariants.map((variant) => <option key={variant} value={variant}>{variant}</option>)}</select></label>
-                      <label><span className="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Scale</span><select value={modelScale} onChange={(event) => { selectStructuredModel(modelFamily, modelVariant, event.target.value); completeGuideThrough(1); setGuideStep(2); }} className="select select-bordered w-full text-sm">{modelScales.map((scale) => <option key={scale} value={scale}>{scale}</option>)}</select></label>
-                      <label><span className="mb-1 block text-sm font-medium text-slate-700">Total Params (B)</span><input type="number" min={0.01} step={0.01} value={customTotalParamsB} onChange={(event) => { setModelMode('custom'); setCustomTotalParamsB(atLeast(event.target.value, 0.01, customTotalParamsB)); }} className="input input-bordered w-full text-sm" /></label>
-                      <label><span className="mb-1 block text-sm font-medium text-slate-700">Active Params (B)</span><input type="number" min={0.01} step={0.01} value={customActiveParamsB} onChange={(event) => { setModelMode('custom'); setCustomActiveParamsB(atLeast(event.target.value, 0.01, customActiveParamsB)); }} className="input input-bordered w-full text-sm" /></label>
-                      <label><span className="mb-1 block text-sm font-medium text-slate-700">Layers</span><input type="number" min={1} step={1} value={customLayers} onChange={(event) => { setModelMode('custom'); setCustomLayers(integerAtLeast(event.target.value, 1, customLayers)); }} className="input input-bordered w-full text-sm" /></label>
+                      <label><span className="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{t('family')}</span><select value={modelFamily} onChange={(event) => selectStructuredModel(event.target.value, modelVariant, modelScale)} className="select select-bordered w-full text-sm">{modelFamilies.map((family) => <option key={family} value={family}>{family}</option>)}</select></label>
+                      <label><span className="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{t('type')}</span><select value={modelVariant} onChange={(event) => selectStructuredModel(modelFamily, event.target.value, modelScale)} className="select select-bordered w-full text-sm">{modelVariants.map((variant) => <option key={variant} value={variant}>{variant}</option>)}</select></label>
+                      <label><span className="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{t('scale')}</span><select value={modelScale} onChange={(event) => { selectStructuredModel(modelFamily, modelVariant, event.target.value); completeGuideThrough(1); setGuideStep(2); }} className="select select-bordered w-full text-sm">{modelScales.map((scale) => <option key={scale} value={scale}>{scale}</option>)}</select></label>
+                      <label><span className="mb-1 block text-sm font-medium text-slate-700">{t('totalParamsB')}</span><input type="number" min={0.01} step={0.01} value={customTotalParamsB} onChange={(event) => { setModelMode('custom'); setCustomTotalParamsB(atLeast(event.target.value, 0.01, customTotalParamsB)); }} className="input input-bordered w-full text-sm" /></label>
+                      <label><span className="mb-1 block text-sm font-medium text-slate-700">{t('activeParamsB')}</span><input type="number" min={0.01} step={0.01} value={customActiveParamsB} onChange={(event) => { setModelMode('custom'); setCustomActiveParamsB(atLeast(event.target.value, 0.01, customActiveParamsB)); }} className="input input-bordered w-full text-sm" /></label>
+                      <label><span className="mb-1 block text-sm font-medium text-slate-700">{t('layers')}</span><input type="number" min={1} step={1} value={customLayers} onChange={(event) => { setModelMode('custom'); setCustomLayers(integerAtLeast(event.target.value, 1, customLayers)); }} className="input input-bordered w-full text-sm" /></label>
                     </div>
                   </div>
                 )}
 
                 {guideStep === 1 && guideModelStage !== 'review' && (
-                  <p className="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-500">Choose a scale or search result to move to hardware.</p>
+                  <p className="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-500">{t('chooseScaleHint')}</p>
                 )}
               </div>
             </GuideStepPanel>
@@ -2085,13 +2580,13 @@ export default function LLMVRAMCalculator() {
               locked={guideCompletedThrough < 1}
               onEdit={() => setGuideStep(2)}
               step={2}
-              title="Choose GPU hardware"
-              subtitle="Start with vendor, then hardware class, then the accelerator card."
+              title={t('chooseHardware')}
+              subtitle={t('chooseHardwareSubtitle')}
               summary={guideCompletedThrough < 1
-                ? <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50 p-3 text-sm text-slate-500">Complete the model choice to unlock hardware selection.</div>
+                ? <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50 p-3 text-sm text-slate-500">{t('lockedModelFirst')}</div>
                 : guideCompletedThrough < 2
-                  ? <div className="rounded-lg border border-dashed border-indigo-200 bg-indigo-50 p-3 text-sm text-indigo-700">Ready for hardware selection.</div>
-                : <div className="grid grid-cols-1 gap-2 sm:grid-cols-3"><StatTile label="GPU" value={effectiveCard ? stripVendor(effectiveCard.name) : 'None'} detail={effectiveGpuRelease} /><StatTile label="VRAM" value={`${effectiveCard?.vramGb ?? 0} GB`} /><StatTile label="Bandwidth" value={`${formatNumber(effectiveCard?.memoryBandwidthGBs ?? 0, 0)} GB/s`} /></div>}
+                  ? <div className="rounded-lg border border-dashed border-indigo-200 bg-indigo-50 p-3 text-sm text-indigo-700">{t('readyHardware')}</div>
+                : <div className="grid grid-cols-1 gap-2 sm:grid-cols-3"><StatTile label={t('gpu')} value={effectiveCard ? stripVendor(effectiveCard.name) : t('none')} detail={effectiveGpuRelease} /><StatTile label={t('vram')} value={`${effectiveCard?.vramGb ?? 0} GB`} /><StatTile label={t('bandwidth')} value={`${formatNumber(effectiveCard?.memoryBandwidthGBs ?? 0, 0)} GB/s`} /></div>}
             >
               <div className="space-y-4">
                 <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_auto]">
@@ -2100,7 +2595,7 @@ export default function LLMVRAMCalculator() {
                     <input
                       value={gpuQuery}
                       onChange={(event) => setGpuQuery(event.target.value)}
-                      placeholder="Type to search a GPU directly"
+                      placeholder={t('searchGpuPlaceholder')}
                       className="w-full bg-transparent text-sm focus:outline-none"
                     />
                   </label>
@@ -2110,7 +2605,7 @@ export default function LLMVRAMCalculator() {
                     onClick={() => setShowGuideGpuDetailed((value) => !value)}
                   >
                     <Settings className="h-4 w-4" />
-                    Detailed choice
+                    {t('detailedChoice')}
                   </button>
                 </div>
 
@@ -2119,7 +2614,7 @@ export default function LLMVRAMCalculator() {
                     {guidedGpuSearchResults.map((gpu) => (
                       <button key={gpu.name} type="button" className="picker-card" data-active={selectedCard?.name === gpu.name} onClick={() => applyGuideGpuCard(gpu)}>
                         <div className="wrap-anywhere text-sm font-bold leading-snug text-slate-950">{stripVendor(gpu.name)}</div>
-                        <div className="mt-1 text-xs text-slate-500">{gpuClass(gpu)} / {inferArchitecture(gpu)} / Released {formatReleaseDate(gpu.releaseDate)}</div>
+                        <div className="mt-1 text-xs text-slate-500">{gpuClass(gpu)} / {inferArchitecture(gpu)} / {t('released')} {formatReleaseDate(gpu.releaseDate)}</div>
                         <div className="mt-3 grid grid-cols-3 gap-2 text-xs text-slate-600"><span>{gpu.vramGb} GB</span><span>{formatNumber(gpu.memoryBandwidthGBs, 0)} GB/s</span><span>{formatNumber(gpu.processPower.fp16 ?? 0)} TFLOPS</span></div>
                       </button>
                     ))}
@@ -2130,10 +2625,10 @@ export default function LLMVRAMCalculator() {
                   <div className="space-y-4">
                     <SubstepRail
                       items={[
-                        { label: 'Vendor', value: gpuVendorFilter === 'All' ? undefined : gpuVendorFilter, active: guideGpuStage === 'vendor', complete: gpuStageIndex > 0, onClick: () => setGuideGpuStage('vendor') },
-                        { label: 'Class', value: guideGpuClass, active: guideGpuStage === 'class', complete: gpuStageIndex > 1, locked: gpuStageIndex < 1, onClick: () => setGuideGpuStage('class') },
-                        { label: 'Card', value: effectiveCard ? stripVendor(effectiveCard.name) : undefined, active: guideGpuStage === 'card', complete: gpuStageIndex > 2, locked: gpuStageIndex < 2, onClick: () => setGuideGpuStage('card') },
-                        { label: 'Review', value: effectiveCard ? `${effectiveCard.vramGb} GB` : undefined, active: guideGpuStage === 'review', complete: false, locked: gpuStageIndex < 3, onClick: () => setGuideGpuStage('review') },
+                        { label: t('vendor'), value: gpuVendorFilter === 'All' ? undefined : gpuVendorFilter, active: guideGpuStage === 'vendor', complete: gpuStageIndex > 0, onClick: () => setGuideGpuStage('vendor') },
+                        { label: t('class'), value: guideGpuClass, active: guideGpuStage === 'class', complete: gpuStageIndex > 1, locked: gpuStageIndex < 1, onClick: () => setGuideGpuStage('class') },
+                        { label: t('card'), value: effectiveCard ? stripVendor(effectiveCard.name) : undefined, active: guideGpuStage === 'card', complete: gpuStageIndex > 2, locked: gpuStageIndex < 2, onClick: () => setGuideGpuStage('card') },
+                        { label: t('review'), value: effectiveCard ? `${effectiveCard.vramGb} GB` : undefined, active: guideGpuStage === 'review', complete: false, locked: gpuStageIndex < 3, onClick: () => setGuideGpuStage('review') },
                       ]}
                     />
 
@@ -2141,7 +2636,7 @@ export default function LLMVRAMCalculator() {
                       <div className="rounded-xl border border-slate-200 bg-white p-4">
                         <div className="mb-3">
                           <div className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Hardware substep 1</div>
-                          <h4 className="text-sm font-bold text-slate-950">Choose hardware vendor</h4>
+                          <h4 className="text-sm font-bold text-slate-950">{t('vendor')}</h4>
                         </div>
                         <div className="grid grid-cols-2 gap-2">
                           {guidedGpuVendors.map((vendor) => (
@@ -2170,7 +2665,7 @@ export default function LLMVRAMCalculator() {
                             <span className="h-2 w-2 rounded-full" style={{ backgroundColor: getVendorColor(gpuVendorFilter) }} />
                             {gpuVendorFilter}
                           </span>
-                          <span className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Hardware substep 2: class</span>
+                          <span className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{t('hardwareSubstep2Class')}</span>
                         </div>
                         <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
                           {guidedGpuClasses.map((item) => (
@@ -2190,13 +2685,13 @@ export default function LLMVRAMCalculator() {
                             {gpuVendorFilter}
                           </span>
                           <span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-bold text-slate-700">{guideGpuClass}</span>
-                          <span className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Hardware substep 3: card</span>
+                          <span className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{t('hardwareSubstep3Card')}</span>
                         </div>
                         <div className="grid max-h-[22rem] grid-cols-1 gap-2 overflow-y-auto pr-1 md:grid-cols-2">
                           {guidedGpuChoices.map((gpu) => (
                             <button key={gpu.name} type="button" className="picker-card" data-active={selectedCard?.name === gpu.name} onClick={() => applyGuideGpuCard(gpu)}>
                               <div className="wrap-anywhere text-sm font-bold leading-snug text-slate-950">{stripVendor(gpu.name)}</div>
-                              <div className="mt-1 text-xs text-slate-500">{inferArchitecture(gpu)} / Released {formatReleaseDate(gpu.releaseDate)}</div>
+                              <div className="mt-1 text-xs text-slate-500">{inferArchitecture(gpu)} / {t('released')} {formatReleaseDate(gpu.releaseDate)}</div>
                               <div className="mt-3 grid grid-cols-3 gap-2 text-xs text-slate-600"><span>{gpu.vramGb} GB</span><span>{formatNumber(gpu.memoryBandwidthGBs, 0)} GB/s</span><span>{formatNumber(gpu.processPower.fp16 ?? 0)} TFLOPS</span></div>
                             </button>
                           ))}
@@ -2206,11 +2701,11 @@ export default function LLMVRAMCalculator() {
 
                     {guideGpuStage === 'review' && (
                       <div className="rounded-xl border border-indigo-200 bg-indigo-50 p-4">
-                        <div className="text-xs font-semibold uppercase tracking-[0.08em] text-indigo-700">Combination result</div>
+                        <div className="text-xs font-semibold uppercase tracking-[0.08em] text-indigo-700">{t('combinationResult')}</div>
                         <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-3">
-                          <StatTile label="GPU" value={effectiveCard ? stripVendor(effectiveCard.name) : 'None'} detail={effectiveGpuRelease} />
-                          <StatTile label="Class" value={effectiveCard ? gpuClass(effectiveCard) : 'Custom'} detail={effectiveCard ? inferArchitecture(effectiveCard) : customArchitecture} />
-                          <StatTile label="Memory" value={`${effectiveCard?.vramGb ?? 0} GB`} detail={`${formatNumber(effectiveCard?.memoryBandwidthGBs ?? 0, 0)} GB/s`} />
+                          <StatTile label={t('gpu')} value={effectiveCard ? stripVendor(effectiveCard.name) : t('none')} detail={effectiveGpuRelease} />
+                          <StatTile label={t('class')} value={effectiveCard ? gpuClass(effectiveCard) : 'Custom'} detail={effectiveCard ? inferArchitecture(effectiveCard) : customArchitecture} />
+                          <StatTile label={t('vram')} value={`${effectiveCard?.vramGb ?? 0} GB`} detail={`${formatNumber(effectiveCard?.memoryBandwidthGBs ?? 0, 0)} GB/s`} />
                         </div>
                       </div>
                     )}
@@ -2219,20 +2714,20 @@ export default function LLMVRAMCalculator() {
 
                 {showGuideGpuDetailed && (
                   <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                    <div className="mb-3 text-sm font-bold text-slate-950">Detailed hardware choice</div>
+                    <div className="mb-3 text-sm font-bold text-slate-950">{t('detailedHardwareChoice')}</div>
                     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                      <label><span className="mb-1 block text-sm font-medium text-slate-700">Supplier</span><select value={customSupplier} onChange={(event) => { setGpuMode('numeric'); setCustomSupplier(event.target.value); }} className="select select-bordered w-full text-sm">{customSuppliers.map((supplier) => <option key={supplier} value={supplier}>{supplier}</option>)}</select></label>
-                      <label><span className="mb-1 block text-sm font-medium text-slate-700">Architecture</span><select value={customArchitecture} onChange={(event) => { setGpuMode('numeric'); setCustomArchitecture(event.target.value); }} className="select select-bordered w-full text-sm">{customArchitectures.map((architecture) => <option key={architecture} value={architecture}>{architecture}</option>)}</select></label>
-                      <label><span className="mb-1 block text-sm font-medium text-slate-700">VRAM (GB)</span><input type="number" min={1} step={1} value={customVramGB} onChange={(event) => { setGpuMode('numeric'); setCustomVramGB(atLeast(event.target.value, 1, customVramGB)); }} className="input input-bordered w-full text-sm" /></label>
-                      <label><span className="mb-1 block text-sm font-medium text-slate-700">Memory BW (GB/s)</span><input type="number" min={1} step={1} value={customMemoryBandwidthGBs} onChange={(event) => { setGpuMode('numeric'); setCustomMemoryBandwidthGBs(atLeast(event.target.value, 1, customMemoryBandwidthGBs)); }} className="input input-bordered w-full text-sm" /></label>
+                      <label><span className="mb-1 block text-sm font-medium text-slate-700">{t('supplier')}</span><select value={customSupplier} onChange={(event) => { setGpuMode('numeric'); setCustomSupplier(event.target.value); }} className="select select-bordered w-full text-sm">{customSuppliers.map((supplier) => <option key={supplier} value={supplier}>{supplier}</option>)}</select></label>
+                      <label><span className="mb-1 block text-sm font-medium text-slate-700">{t('architecture')}</span><select value={customArchitecture} onChange={(event) => { setGpuMode('numeric'); setCustomArchitecture(event.target.value); }} className="select select-bordered w-full text-sm">{customArchitectures.map((architecture) => <option key={architecture} value={architecture}>{architecture}</option>)}</select></label>
+                      <label><span className="mb-1 block text-sm font-medium text-slate-700">{t('vram')} (GB)</span><input type="number" min={1} step={1} value={customVramGB} onChange={(event) => { setGpuMode('numeric'); setCustomVramGB(atLeast(event.target.value, 1, customVramGB)); }} className="input input-bordered w-full text-sm" /></label>
+                      <label><span className="mb-1 block text-sm font-medium text-slate-700">{t('memoryBw')}</span><input type="number" min={1} step={1} value={customMemoryBandwidthGBs} onChange={(event) => { setGpuMode('numeric'); setCustomMemoryBandwidthGBs(atLeast(event.target.value, 1, customMemoryBandwidthGBs)); }} className="input input-bordered w-full text-sm" /></label>
                     </div>
                   </div>
                 )}
 
                 <div className="flex flex-wrap justify-between gap-2">
-                  <button type="button" className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700" onClick={() => setGuideStep(1)}>Back</button>
+                  <button type="button" className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700" onClick={() => setGuideStep(1)}>{t('back')}</button>
                   {guideGpuStage !== 'review' && (
-                    <span className="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-500">Choose a GPU card to move to parameters.</span>
+                    <span className="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-500">{t('chooseGpuHint')}</span>
                   )}
                 </div>
               </div>
@@ -2244,33 +2739,33 @@ export default function LLMVRAMCalculator() {
               locked={guideCompletedThrough < 2}
               onEdit={() => setGuideStep(3)}
               step={3}
-              title="Performance estimation parameters"
-              subtitle="Pick an estimation preset first, then adjust precision, context, concurrency, and guard rails."
+              title={t('perfParams')}
+              subtitle={t('perfParamsSubtitle')}
               summary={guideCompletedThrough < 2
-                ? <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50 p-3 text-sm text-slate-500">Choose GPU hardware before tuning runtime assumptions.</div>
+                ? <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50 p-3 text-sm text-slate-500">{t('lockedHardwareFirst')}</div>
                 : guideCompletedThrough < 3
-                  ? <div className="rounded-lg border border-dashed border-indigo-200 bg-indigo-50 p-3 text-sm text-indigo-700">Ready for performance parameters.</div>
-                : <div className="grid grid-cols-1 gap-2 sm:grid-cols-3"><StatTile label="Weights" value={quantType.toUpperCase()} /><StatTile label="KV cache" value={kvQuantType.toUpperCase()} /><StatTile label="Context" value={formatCompact(maxLength)} detail={`${userCount} users, ${parallelGPUs} GPU`} /></div>}
+                  ? <div className="rounded-lg border border-dashed border-indigo-200 bg-indigo-50 p-3 text-sm text-indigo-700">{t('readyPerf')}</div>
+                : <div className="grid grid-cols-1 gap-2 sm:grid-cols-3"><StatTile label={t('weights')} value={quantType.toUpperCase()} /><StatTile label={t('kvCache')} value={kvQuantType.toUpperCase()} /><StatTile label={t('context')} value={formatCompact(maxLength)} detail={`${userCount} ${t('users')}, ${parallelGPUs} ${t('gpuUnit')}`} /></div>}
             >
               <div className="space-y-5">
                 <SubstepRail
                   items={[
-                    { label: 'Preset', value: 'Start point', active: guideRuntimeStage === 'preset', complete: runtimeStageIndex > 0, onClick: () => setGuideRuntimeStage('preset') },
-                    { label: 'Weights', value: quantType.toUpperCase(), active: guideRuntimeStage === 'weights', complete: runtimeStageIndex > 1, locked: runtimeStageIndex < 1, onClick: () => setGuideRuntimeStage('weights') },
-                    { label: 'KV cache', value: kvQuantType.toUpperCase(), active: guideRuntimeStage === 'kv', complete: runtimeStageIndex > 2, locked: runtimeStageIndex < 2, onClick: () => setGuideRuntimeStage('kv') },
-                    { label: 'Workload', value: `${formatCompact(maxLength)}, ${userCount} users`, active: guideRuntimeStage === 'workload', complete: false, locked: runtimeStageIndex < 3, onClick: () => setGuideRuntimeStage('workload') },
+                    { label: t('preset'), value: t('startPoint'), active: guideRuntimeStage === 'preset', complete: runtimeStageIndex > 0, onClick: () => setGuideRuntimeStage('preset') },
+                    { label: t('weights'), value: quantType.toUpperCase(), active: guideRuntimeStage === 'weights', complete: runtimeStageIndex > 1, locked: runtimeStageIndex < 1, onClick: () => setGuideRuntimeStage('weights') },
+                    { label: t('kvCache'), value: kvQuantType.toUpperCase(), active: guideRuntimeStage === 'kv', complete: runtimeStageIndex > 2, locked: runtimeStageIndex < 2, onClick: () => setGuideRuntimeStage('kv') },
+                    { label: t('workload'), value: `${formatCompact(maxLength)}, ${userCount} ${t('users')}`, active: guideRuntimeStage === 'workload', complete: false, locked: runtimeStageIndex < 3, onClick: () => setGuideRuntimeStage('workload') },
                   ]}
                 />
 
                 {guideRuntimeStage === 'preset' && (
                   <div>
-                  <div className="mb-2 text-sm font-semibold text-slate-800">Estimation preset</div>
+                  <div className="mb-2 text-sm font-semibold text-slate-800">{t('estimationPreset')}</div>
                   <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4">
                     {[
-                      { id: 'balanced', label: 'Balanced', desc: 'INT4 weights, FP8 KV, normal reserve' },
-                      { id: 'memory', label: 'Memory saver', desc: 'Aggressive capacity margin' },
-                      { id: 'throughput', label: 'Throughput probe', desc: 'FP8 weights with safer KV' },
-                      { id: 'long', label: 'Long context', desc: 'Raises context floor to 32K' },
+                      { id: 'balanced', label: t('balanced'), desc: t('balancedDesc') },
+                      { id: 'memory', label: t('memorySaver'), desc: t('memorySaverDesc') },
+                      { id: 'throughput', label: t('throughputProbe'), desc: t('throughputProbeDesc') },
+                      { id: 'long', label: t('longContext'), desc: t('longContextDesc') },
                     ].map((preset) => (
                       <button key={preset.id} type="button" className="picker-card" onClick={() => applyRuntimePreset(preset.id as 'balanced' | 'memory' | 'throughput' | 'long')}>
                         <div className="text-sm font-bold text-slate-950">{preset.label}</div>
@@ -2283,7 +2778,7 @@ export default function LLMVRAMCalculator() {
 
                 {guideRuntimeStage === 'weights' && (
                   <div>
-                  <div className="mb-2 text-sm font-semibold text-slate-800">Weight Quantization</div>
+                  <div className="mb-2 text-sm font-semibold text-slate-800">{t('weightQuantization')}</div>
                   <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
                     {runtimeQuantOptions.map((option) => (
                       <button
@@ -2306,7 +2801,7 @@ export default function LLMVRAMCalculator() {
 
                 {guideRuntimeStage === 'kv' && (
                   <div>
-                  <div className="mb-2 text-sm font-semibold text-slate-800">KV Cache Precision</div>
+                  <div className="mb-2 text-sm font-semibold text-slate-800">{t('kvCachePrecision')}</div>
                   <div className="grid grid-cols-2 gap-2 md:grid-cols-3 2xl:grid-cols-5">
                     {kvQuantOptions.map((option) => (
                       <button
@@ -2330,17 +2825,17 @@ export default function LLMVRAMCalculator() {
                 {guideRuntimeStage === 'workload' && (
                   <>
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                      <label><span className="mb-2 block text-sm font-semibold text-slate-800">Concurrent Users</span><DraftNumberInput integer min={1} step={1} value={userCount} onValueChange={setUserCount} /></label>
-                      <label><span className="mb-2 block text-sm font-semibold text-slate-800">Parallel GPUs</span><DraftNumberInput integer min={1} step={1} value={parallelGPUs} onValueChange={setParallelGPUs} /></label>
-                      <label><span className="mb-2 block text-sm font-semibold text-slate-800">Max Context Length</span><DraftNumberInput integer min={1024} step={1024} value={maxLength} onValueChange={setMaxLength} /></label>
-                      <label><span className="mb-2 block text-sm font-semibold text-slate-800">Reserve VRAM (GB)</span><DraftNumberInput min={0} step={0.5} value={minReserveVramGB} onValueChange={setMinReserveVramGB} /></label>
+                      <label><span className="mb-2 block text-sm font-semibold text-slate-800">{t('concurrentUsers')}</span><DraftNumberInput integer min={1} step={1} value={userCount} onValueChange={setUserCount} /></label>
+                      <label><span className="mb-2 block text-sm font-semibold text-slate-800">{t('parallelGpus')}</span><DraftNumberInput integer min={1} step={1} value={parallelGPUs} onValueChange={setParallelGPUs} /></label>
+                      <label><span className="mb-2 block text-sm font-semibold text-slate-800">{t('maxContextLength')}</span><DraftNumberInput integer min={1024} step={1024} value={maxLength} onValueChange={setMaxLength} /></label>
+                      <label><span className="mb-2 block text-sm font-semibold text-slate-800">{t('reserveVramGb')}</span><DraftNumberInput min={0} step={0.5} value={minReserveVramGB} onValueChange={setMinReserveVramGB} /></label>
                     </div>
                     <div className="rounded-xl border border-slate-200 bg-white p-4">
-                      <div className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Current performance assumptions</div>
+                      <div className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{t('currentPerfAssumptions')}</div>
                       <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
-                        <StatTile label="Memory policy" value={`${Math.round(vramUtilProportion * 100)}%`} detail={`${formatNumber(minReserveVramGB)} GB reserve`} />
-                        <StatTile label="Workload" value={`${userCount} users`} detail={`${formatCompact(maxLength)} context`} />
-                        <StatTile label="Parallelism" value={`${parallelGPUs} GPU`} detail={`scale x${results?.ppScaling.toFixed(2) ?? '1.00'} / x${results?.membwScaling.toFixed(2) ?? '1.00'}`} />
+                        <StatTile label={t('memoryPolicy')} value={`${Math.round(vramUtilProportion * 100)}%`} detail={`${formatNumber(minReserveVramGB)} GB reserve`} />
+                        <StatTile label={t('workload')} value={`${userCount} ${t('users')}`} detail={`${formatCompact(maxLength)} ${t('context')}`} />
+                        <StatTile label={t('parallelism')} value={`${parallelGPUs} ${t('gpuUnit')}`} detail={`scale x${results?.ppScaling.toFixed(2) ?? '1.00'} / x${results?.membwScaling.toFixed(2) ?? '1.00'}`} />
                       </div>
                     </div>
                   </>
@@ -2352,9 +2847,9 @@ export default function LLMVRAMCalculator() {
               <section className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 shadow-sm">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="min-w-0">
-                    <div className="text-xs font-semibold uppercase tracking-[0.08em] text-emerald-700">Step 1-2-3 complete</div>
-                    <h3 className="mt-1 text-base font-bold text-slate-950">Ready to compute</h3>
-                    <p className="mt-1 text-sm leading-6 text-slate-600">Model, GPU hardware, and runtime assumptions are set.</p>
+                    <div className="text-xs font-semibold uppercase tracking-[0.08em] text-emerald-700">{t('stepsComplete')}</div>
+                    <h3 className="mt-1 text-base font-bold text-slate-950">{t('readyToCompute')}</h3>
+                    <p className="mt-1 text-sm leading-6 text-slate-600">{t('readyToComputeDesc')}</p>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <button
@@ -2363,7 +2858,7 @@ export default function LLMVRAMCalculator() {
                       onClick={() => setGuideStep(2)}
                     >
                       <ArrowLeft className="h-4 w-4" />
-                      Back
+                      {t('back')}
                     </button>
                     <button
                       type="button"
@@ -2371,7 +2866,7 @@ export default function LLMVRAMCalculator() {
                       onClick={() => { completeGuideThrough(3); setGuideStep(4); setActiveTab('results'); setEntryMode('detailed'); setShowGuideResultBanner(true); }}
                     >
                       <Zap className="h-4 w-4" />
-                      Compute final result
+                      {t('computeFinalResult')}
                     </button>
                   </div>
                 </div>
@@ -2381,20 +2876,20 @@ export default function LLMVRAMCalculator() {
 
           <aside className="space-y-4">
             <section className="panel p-4">
-              <h3 className="text-sm font-bold text-slate-950">Setup summary</h3>
+              <h3 className="text-sm font-bold text-slate-950">{t('setupSummary')}</h3>
               <div className="mt-4 space-y-3">
-                <StatTile label="Model" value={effectiveModel?.name ?? 'None'} detail={`${effectiveModelMeta?.variant ?? 'Custom'}, ${effectiveModelRelease}`} />
-                <StatTile label="Hardware" value={effectiveCard ? stripVendor(effectiveCard.name) : 'None'} detail={`${effectiveCard ? inferArchitecture(effectiveCard) : customArchitecture}, ${effectiveGpuRelease}`} />
-                <StatTile label="Parameters" value={`${quantType.toUpperCase()} / ${kvQuantType.toUpperCase()}`} detail={`${formatCompact(maxLength)} context, ${userCount} users`} />
+                <StatTile label={t('model')} value={effectiveModel?.name ?? t('none')} detail={`${effectiveModelMeta?.variant ?? 'Custom'}, ${effectiveModelRelease}`} />
+                <StatTile label={t('hardware')} value={effectiveCard ? stripVendor(effectiveCard.name) : t('none')} detail={`${effectiveCard ? inferArchitecture(effectiveCard) : customArchitecture}, ${effectiveGpuRelease}`} />
+                <StatTile label={t('params')} value={`${quantType.toUpperCase()} / ${kvQuantType.toUpperCase()}`} detail={`${formatCompact(maxLength)} ${t('context')}, ${userCount} ${t('users')}`} />
               </div>
             </section>
             <section className="panel p-4">
-              <h3 className="text-sm font-bold text-slate-950">Next action</h3>
+              <h3 className="text-sm font-bold text-slate-950">{t('nextAction')}</h3>
               <p className="mt-2 text-sm leading-6 text-slate-600">
-                {guideStep === 1 && 'Choose a model scale or direct search result. The next step opens automatically.'}
-                {guideStep === 2 && 'Choose a GPU card. Runtime parameters open automatically after the card is selected.'}
-                {guideStep === 3 && 'Tune assumptions, then compute once at the final step.'}
-                {guideStep === 4 && 'The final result is open in Detailed Controls.'}
+                {guideStep === 1 && t('nextActionModel')}
+                {guideStep === 2 && t('nextActionHardware')}
+                {guideStep === 3 && t('nextActionRuntime')}
+                {guideStep === 4 && t('nextActionDone')}
               </p>
             </section>
           </aside>
@@ -2408,9 +2903,9 @@ export default function LLMVRAMCalculator() {
                 <Columns2 className="h-4 w-4" />
               </div>
               <div className="min-w-0">
-                <div className="text-sm font-bold text-slate-950">Focus layout</div>
+                <div className="text-sm font-bold text-slate-950">{t('focusLayout')}</div>
                 <p className="text-xs text-slate-500">
-                  Params {effectiveDetailLayout.params}% / Workspace {effectiveDetailLayout.workspace}% - {detailLayoutMode === 'auto' ? 'Auto' : 'Manual'}
+                  {t('paramsLabel')} {effectiveDetailLayout.params}% / {t('workspaceLabel')} {effectiveDetailLayout.workspace}% - {detailLayoutMode === 'auto' ? t('auto') : t('manual')}
                 </p>
               </div>
             </div>
@@ -2423,11 +2918,11 @@ export default function LLMVRAMCalculator() {
                 onClick={() => setDetailLayoutMode('auto')}
               >
                 <Columns2 className="h-4 w-4" />
-                Auto
+                {t('auto')}
               </button>
               <button
                 type="button"
-                title="Shrink parameter panel"
+                title={t('shrinkParamPanel')}
                 className="inline-flex min-h-9 items-center justify-center gap-2 rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 disabled:opacity-40"
                 disabled={effectiveDetailLayoutRatio === '25-75'}
                 onClick={() => {
@@ -2436,11 +2931,11 @@ export default function LLMVRAMCalculator() {
                 }}
               >
                 <span className="text-base font-black leading-none">-</span>
-                Params
+                {t('paramsLabel')}
               </button>
               <button
                 type="button"
-                title="Expand parameter panel"
+                title={t('expandParamPanel')}
                 className="inline-flex min-h-9 items-center justify-center gap-2 rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 disabled:opacity-40"
                 disabled={effectiveDetailLayoutRatio === '75-25'}
                 onClick={() => {
@@ -2449,7 +2944,7 @@ export default function LLMVRAMCalculator() {
                 }}
               >
                 <span className="text-base font-black leading-none">+</span>
-                Params
+                {t('paramsLabel')}
               </button>
             </div>
           </div>
@@ -2460,8 +2955,8 @@ export default function LLMVRAMCalculator() {
           <section className="panel p-4 sm:p-5">
             <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
               <div>
-                <div className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Setup controls</div>
-                <h2 className="mt-1 text-base font-bold text-slate-950">{detailConfigSection === 'summary' ? 'Selected configuration' : 'Editing configuration'}</h2>
+                <div className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{t('setupControls')}</div>
+                <h2 className="mt-1 text-base font-bold text-slate-950">{detailConfigSection === 'summary' ? t('selectedConfiguration') : t('editingConfiguration')}</h2>
               </div>
               {detailConfigSection !== 'summary' && (
                 <button
@@ -2469,7 +2964,7 @@ export default function LLMVRAMCalculator() {
                   className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700"
                   onClick={collapseDetailConfigSection}
                 >
-                  Done
+                  {t('done')}
                 </button>
               )}
             </div>
@@ -2477,29 +2972,29 @@ export default function LLMVRAMCalculator() {
               <DetailSummaryCard
                 active={detailConfigSection === 'model'}
                 accentColor={getModelColor(effectiveModel?.name ?? modelFamily)}
-                detail={`${effectiveModelMeta?.variant ?? 'Custom'} / ${quantType.toUpperCase()} / Released ${effectiveModelRelease}`}
+                detail={`${effectiveModelMeta?.variant ?? 'Custom'} / ${quantType.toUpperCase()} / ${t('released')} ${effectiveModelRelease}`}
                 icon={<Layers className="h-4 w-4" />}
-                label="Model"
+                label={t('model')}
                 onClick={() => openDetailConfigSection('model')}
-                value={effectiveModel?.name ?? 'No model selected'}
+                value={effectiveModel?.name ?? t('noModelSelected')}
               />
               <DetailSummaryCard
                 active={detailConfigSection === 'hardware'}
                 accentColor={effectiveCard ? getGpuColor(effectiveCard.name) : getVendorColor(customSupplier as VendorFilter | 'Intel' | 'Other')}
                 detail={`${effectiveCard ? inferArchitecture(effectiveCard) : customArchitecture} / ${formatNumber(totalGpuVram)} GB total VRAM`}
                 icon={<Cpu className="h-4 w-4" />}
-                label="Hardware"
+                label={t('hardware')}
                 onClick={() => openDetailConfigSection('hardware')}
-                value={effectiveCard ? stripVendor(effectiveCard.name) : 'Custom GPU'}
+                value={effectiveCard ? stripVendor(effectiveCard.name) : t('customGpu')}
               />
               <DetailSummaryCard
                 active={detailConfigSection === 'deployment'}
                 accentColor="#7c3aed"
                 detail={`${kvQuantType.toUpperCase()} KV / ${formatCompact(maxLength)} context / ${parallelGPUs} GPU`}
                 icon={<Settings className="h-4 w-4" />}
-                label="Deployment"
+                label={t('deployment')}
                 onClick={() => openDetailConfigSection('deployment')}
-                value={`${userCount} concurrent users`}
+                value={`${userCount} ${t('users')}`}
               />
             </div>
           </section>
@@ -2511,8 +3006,8 @@ export default function LLMVRAMCalculator() {
                   <Layers className="h-5 w-5" />
                 </div>
                 <div className="min-w-0">
-                  <h2 className="text-base font-bold text-slate-950">Model</h2>
-                  <p className="text-sm text-slate-500">Choose from catalog, compose by family, or enter custom values</p>
+                  <h2 className="text-base font-bold text-slate-950">{t('model')}</h2>
+                  <p className="text-sm text-slate-500">{t('modelPanelDesc')}</p>
                 </div>
               </div>
             </div>
@@ -2520,15 +3015,15 @@ export default function LLMVRAMCalculator() {
             <div className="segmented mb-4 grid-cols-3">
               <SegmentedButton active={modelMode === 'catalog'} onClick={() => setModelMode('catalog')}>
                 <List className="h-4 w-4" />
-                Catalog
+                {t('catalog')}
               </SegmentedButton>
               <SegmentedButton active={modelMode === 'structured'} onClick={() => setModelMode('structured')}>
                 <SlidersHorizontal className="h-4 w-4" />
-                Structured
+                {t('structured')}
               </SegmentedButton>
               <SegmentedButton active={modelMode === 'custom'} onClick={() => setModelMode('custom')}>
                 <Settings className="h-4 w-4" />
-                Custom
+                {t('custom')}
               </SegmentedButton>
             </div>
 
@@ -2539,7 +3034,7 @@ export default function LLMVRAMCalculator() {
                   <input
                     value={modelQuery}
                     onChange={(event) => setModelQuery(event.target.value)}
-                    placeholder="Search model, family, scale"
+                    placeholder={t('searchModelDetailedPlaceholder')}
                     className="w-full bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
                   />
                 </label>
@@ -2569,7 +3064,7 @@ export default function LLMVRAMCalculator() {
                         <span>{model.activeParamsB}B active</span>
                         <span>{model.contextLength ? formatCompact(model.contextLength) : 'custom'} ctx</span>
                       </div>
-                      <div className="mt-2 text-xs font-medium text-slate-400">Released {formatReleaseDate(model.releaseDate)}</div>
+                      <div className="mt-2 text-xs font-medium text-slate-400">{t('released')} {formatReleaseDate(model.releaseDate)}</div>
                     </button>
                   ))}
                 </div>
@@ -2579,7 +3074,7 @@ export default function LLMVRAMCalculator() {
             {modelMode === 'structured' && (
               <div className="adaptive-field-grid">
                 <label className="block">
-                  <span className="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Family</span>
+                  <span className="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{t('family')}</span>
                   <select
                     value={modelFamily}
                     onChange={(event) => selectStructuredModel(event.target.value, modelVariant, modelScale)}
@@ -2589,7 +3084,7 @@ export default function LLMVRAMCalculator() {
                   </select>
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Type</span>
+                  <span className="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{t('type')}</span>
                   <select
                     value={modelVariant}
                     onChange={(event) => selectStructuredModel(modelFamily, event.target.value, modelScale)}
@@ -2599,7 +3094,7 @@ export default function LLMVRAMCalculator() {
                   </select>
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Scale</span>
+                  <span className="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{t('scale')}</span>
                   <select
                     value={modelScale}
                     onChange={(event) => selectStructuredModel(modelFamily, modelVariant, event.target.value)}
@@ -2618,7 +3113,7 @@ export default function LLMVRAMCalculator() {
                         </div>
                       </div>
                       <button type="button" className="text-sm font-semibold text-indigo-600" onClick={() => setActiveTab('model')}>
-                        View model details
+                        {t('viewModelDetails')}
                       </button>
                     </div>
                   </div>
@@ -2629,36 +3124,36 @@ export default function LLMVRAMCalculator() {
             {modelMode === 'custom' && (
               <div className="adaptive-field-grid">
                 <label>
-                  <span className="mb-1 block text-sm font-medium text-slate-700">Total Params (B)</span>
+                  <span className="mb-1 block text-sm font-medium text-slate-700">{t('totalParamsB')}</span>
                   <input type="number" min={0.01} step={0.01} value={customTotalParamsB} onChange={(event) => setCustomTotalParamsB(atLeast(event.target.value, 0.01, customTotalParamsB))} className="input input-bordered w-full text-sm" />
                 </label>
                 <label>
                   <span className="mb-1 flex items-center gap-2 text-sm font-medium text-slate-700">
-                    Model Size (GB)
-                    <button type="button" onClick={() => { setCustomModelSizeGB(currentModelSizeEstimate); setModelSizeUserModified(false); }} className="text-xs font-semibold text-indigo-600">Reset</button>
+                    {t('modelSizeGb')}
+                    <button type="button" onClick={() => { setCustomModelSizeGB(currentModelSizeEstimate); setModelSizeUserModified(false); }} className="text-xs font-semibold text-indigo-600">{t('reset')}</button>
                   </span>
                   <input type="number" min={0.01} step={0.01} value={customModelSizeGB} onChange={(event) => { setCustomModelSizeGB(atLeast(event.target.value, 0.01, customModelSizeGB)); setModelSizeUserModified(true); }} className="input input-bordered w-full text-sm" />
                 </label>
                 <label>
-                  <span className="mb-1 block text-sm font-medium text-slate-700">Active Params (B)</span>
+                  <span className="mb-1 block text-sm font-medium text-slate-700">{t('activeParamsB')}</span>
                   <input type="number" min={0.01} step={0.01} value={customActiveParamsB} onChange={(event) => setCustomActiveParamsB(atLeast(event.target.value, 0.01, customActiveParamsB))} className="input input-bordered w-full text-sm" />
                 </label>
                 <label>
-                  <span className="mb-1 block text-sm font-medium text-slate-700">Layers</span>
+                  <span className="mb-1 block text-sm font-medium text-slate-700">{t('layers')}</span>
                   <input type="number" min={1} step={1} value={customLayers} onChange={(event) => setCustomLayers(integerAtLeast(event.target.value, 1, customLayers))} className="input input-bordered w-full text-sm" />
                 </label>
                 <label>
-                  <span className="mb-1 block text-sm font-medium text-slate-700">KV Heads</span>
+                  <span className="mb-1 block text-sm font-medium text-slate-700">{t('kvHeads')}</span>
                   <input type="number" min={1} step={1} value={customNumKVHeads} onChange={(event) => setCustomNumKVHeads(integerAtLeast(event.target.value, 1, customNumKVHeads))} className="input input-bordered w-full text-sm" />
                 </label>
                 <label>
-                  <span className="mb-1 block text-sm font-medium text-slate-700">Head Dim</span>
+                  <span className="mb-1 block text-sm font-medium text-slate-700">{t('headDim')}</span>
                   <input type="number" min={1} step={1} value={customHeadDim} onChange={(event) => setCustomHeadDim(integerAtLeast(event.target.value, 1, customHeadDim))} className="input input-bordered w-full text-sm" />
                 </label>
                 <label className="sm:col-span-2">
                   <span className="mb-1 flex items-center gap-2 text-sm font-medium text-slate-700">
-                    KV Size (KB/Token)
-                    <button type="button" onClick={() => { setCustomPerKVsizeFp8(currentKvEstimate); setKvSizeUserModified(false); }} className="text-xs font-semibold text-indigo-600">Reset</button>
+                    {t('kvSizeKbToken')}
+                    <button type="button" onClick={() => { setCustomPerKVsizeFp8(currentKvEstimate); setKvSizeUserModified(false); }} className="text-xs font-semibold text-indigo-600">{t('reset')}</button>
                   </span>
                   <input
                     type="number"
@@ -2676,7 +3171,7 @@ export default function LLMVRAMCalculator() {
             )}
 
             <div className="mt-5">
-              <div className="mb-2 text-sm font-semibold text-slate-800">Weight Quantization</div>
+              <div className="mb-2 text-sm font-semibold text-slate-800">{t('weightQuantization')}</div>
               <div className="adaptive-choice-grid">
                 {runtimeQuantOptions.map((option) => (
                   <button
@@ -2700,19 +3195,19 @@ export default function LLMVRAMCalculator() {
                 <Cpu className="h-5 w-5" />
               </div>
               <div>
-                <h2 className="text-base font-bold text-slate-950">Hardware</h2>
-                <p className="text-sm text-slate-500">Pick a GPU catalog item or enter supplier numeric specs</p>
+                <h2 className="text-base font-bold text-slate-950">{t('hardware')}</h2>
+                <p className="text-sm text-slate-500">{t('hardwarePanelDesc')}</p>
               </div>
             </div>
 
             <div className="segmented mb-4 grid-cols-2">
               <SegmentedButton active={gpuMode === 'catalog'} onClick={() => setGpuMode('catalog')}>
                 <Database className="h-4 w-4" />
-                Catalog
+                {t('catalog')}
               </SegmentedButton>
               <SegmentedButton active={gpuMode === 'numeric'} onClick={() => setGpuMode('numeric')}>
                 <SlidersHorizontal className="h-4 w-4" />
-                Numeric
+                {t('numeric')}
               </SegmentedButton>
             </div>
 
@@ -2724,7 +3219,7 @@ export default function LLMVRAMCalculator() {
                     <input
                       value={gpuQuery}
                       onChange={(event) => setGpuQuery(event.target.value)}
-                      placeholder="Search GPU, architecture, class"
+                      placeholder={t('searchGpuDetailedPlaceholder')}
                       className="w-full bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
                     />
                   </label>
@@ -2761,7 +3256,7 @@ export default function LLMVRAMCalculator() {
                         <span>{formatNumber(gpu.memoryBandwidthGBs, 0)} GB/s</span>
                         <span>{formatNumber(gpu.processPower.fp16 ?? 0)} TFLOPS</span>
                       </div>
-                      <div className="mt-2 text-xs font-medium text-slate-400">Released {formatReleaseDate(gpu.releaseDate)}</div>
+                      <div className="mt-2 text-xs font-medium text-slate-400">{t('released')} {formatReleaseDate(gpu.releaseDate)}</div>
                     </button>
                   ))}
                 </div>
@@ -2771,23 +3266,23 @@ export default function LLMVRAMCalculator() {
             {gpuMode === 'numeric' && (
               <div className="adaptive-field-grid">
                 <label>
-                  <span className="mb-1 block text-sm font-medium text-slate-700">Supplier</span>
+                  <span className="mb-1 block text-sm font-medium text-slate-700">{t('supplier')}</span>
                   <select value={customSupplier} onChange={(event) => setCustomSupplier(event.target.value)} className="select select-bordered w-full text-sm">
                     {customSuppliers.map((supplier) => <option key={supplier} value={supplier}>{supplier}</option>)}
                   </select>
                 </label>
                 <label>
-                  <span className="mb-1 block text-sm font-medium text-slate-700">Architecture</span>
+                  <span className="mb-1 block text-sm font-medium text-slate-700">{t('architecture')}</span>
                   <select value={customArchitecture} onChange={(event) => setCustomArchitecture(event.target.value)} className="select select-bordered w-full text-sm">
                     {customArchitectures.map((architecture) => <option key={architecture} value={architecture}>{architecture}</option>)}
                   </select>
                 </label>
                 <label>
-                  <span className="mb-1 block text-sm font-medium text-slate-700">VRAM (GB)</span>
+                  <span className="mb-1 block text-sm font-medium text-slate-700">{t('vram')} (GB)</span>
                   <input type="number" min={1} step={1} value={customVramGB} onChange={(event) => setCustomVramGB(atLeast(event.target.value, 1, customVramGB))} className="input input-bordered w-full text-sm" />
                 </label>
                 <label>
-                  <span className="mb-1 block text-sm font-medium text-slate-700">Memory BW (GB/s)</span>
+                  <span className="mb-1 block text-sm font-medium text-slate-700">{t('memoryBw')}</span>
                   <input type="number" min={1} step={1} value={customMemoryBandwidthGBs} onChange={(event) => setCustomMemoryBandwidthGBs(atLeast(event.target.value, 1, customMemoryBandwidthGBs))} className="input input-bordered w-full text-sm" />
                 </label>
                 <label>
@@ -2795,7 +3290,7 @@ export default function LLMVRAMCalculator() {
                   <input type="number" min={0} step={0.1} value={customProcessPowerFP16} onChange={(event) => setCustomProcessPowerFP16(atLeast(event.target.value, 0, customProcessPowerFP16))} className="input input-bordered w-full text-sm" />
                 </label>
                 <label>
-                  <span className="mb-1 block text-sm font-medium text-slate-700">Default KV Quant</span>
+                  <span className="mb-1 block text-sm font-medium text-slate-700">{t('defaultKvQuant')}</span>
                   <select value={customKvQuantType} onChange={(event) => setCustomKvQuantType(event.target.value as KvQuantType)} className="select select-bordered w-full text-sm">
                     {kvQuantOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
                   </select>
@@ -2810,14 +3305,14 @@ export default function LLMVRAMCalculator() {
                 <Settings className="h-5 w-5" />
               </div>
               <div>
-                <h2 className="text-base font-bold text-slate-950">Deployment</h2>
-                <p className="text-sm text-slate-500">Concurrency, context, and memory guard rails</p>
+                <h2 className="text-base font-bold text-slate-950">{t('deployment')}</h2>
+                <p className="text-sm text-slate-500">{t('deploymentPanelDesc')}</p>
               </div>
             </div>
 
             <div className="space-y-5">
               <div>
-                <div className="mb-2 text-sm font-semibold text-slate-800">KV Cache Precision</div>
+                <div className="mb-2 text-sm font-semibold text-slate-800">{t('kvCachePrecision')}</div>
                 <div className="adaptive-choice-grid">
                   {kvQuantOptions.map((option) => (
                     <button
@@ -2836,26 +3331,26 @@ export default function LLMVRAMCalculator() {
 
               <div className="adaptive-field-grid">
                 <label>
-                  <span className="mb-2 block text-sm font-semibold text-slate-800"><Users className="mr-1 inline h-4 w-4" />Concurrent Users</span>
+                  <span className="mb-2 block text-sm font-semibold text-slate-800"><Users className="mr-1 inline h-4 w-4" />{t('concurrentUsers')}</span>
                   <div className="flex items-center gap-3">
                     <input type="range" min={1} max={userSliderMax} value={Math.min(userCount, userSliderMax)} onChange={(event) => setUserCount(integerAtLeast(event.target.value, 1, userCount))} className="slider flex-1" />
                     <DraftNumberInput integer min={1} step={1} value={userCount} onValueChange={setUserCount} className="input input-bordered w-24 text-center text-sm" />
                   </div>
-                  <span className="mt-1 block text-xs text-slate-400">Slider max: {userSliderMax.toLocaleString()}</span>
+                  <span className="mt-1 block text-xs text-slate-400">{t('sliderMax')}: {userSliderMax.toLocaleString()}</span>
                 </label>
 
                 <label>
-                  <span className="mb-2 block text-sm font-semibold text-slate-800"><Zap className="mr-1 inline h-4 w-4" />Parallel GPUs</span>
+                  <span className="mb-2 block text-sm font-semibold text-slate-800"><Zap className="mr-1 inline h-4 w-4" />{t('parallelGpus')}</span>
                   <div className="flex items-center gap-3">
                     <input type="range" min={1} max={gpuSliderMax} value={Math.min(parallelGPUs, gpuSliderMax)} onChange={(event) => setParallelGPUs(integerAtLeast(event.target.value, 1, parallelGPUs))} className="slider flex-1" />
                     <DraftNumberInput integer min={1} step={1} value={parallelGPUs} onValueChange={setParallelGPUs} className="input input-bordered w-24 text-center text-sm" />
                   </div>
-                  <span className="mt-1 block text-xs text-slate-400">Slider max: {gpuSliderMax.toLocaleString()}</span>
+                  <span className="mt-1 block text-xs text-slate-400">{t('sliderMax')}: {gpuSliderMax.toLocaleString()}</span>
                 </label>
               </div>
 
               <label className="block">
-                <span className="mb-2 block text-sm font-semibold text-slate-800"><HardDrive className="mr-1 inline h-4 w-4" />Max Context Length: {maxLength.toLocaleString()} tokens</span>
+                <span className="mb-2 block text-sm font-semibold text-slate-800"><HardDrive className="mr-1 inline h-4 w-4" />{t('maxContextLength')}: {maxLength.toLocaleString()} tokens</span>
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                   <div className="flex-1">
                     <input type="range" min={1024} max={contextSliderMax} step={1024} value={Math.min(maxLength, contextSliderMax)} onChange={(event) => setMaxLength(integerAtLeast(event.target.value, 1024, maxLength))} className="slider w-full" />
@@ -2872,7 +3367,7 @@ export default function LLMVRAMCalculator() {
 
               <div className="adaptive-field-grid">
                 <label>
-                  <span className="mb-2 block text-sm font-semibold text-slate-800">VRAM Utilization: {Math.round(vramUtilProportion * 100)}%</span>
+                  <span className="mb-2 block text-sm font-semibold text-slate-800">{t('vramUtilization')}: {Math.round(vramUtilProportion * 100)}%</span>
                   <div className="flex items-center gap-3">
                     <input type="range" min={1} max={100} value={Math.round(vramUtilProportion * 100)} onChange={(event) => setVramUtilProportion(boundedPercent(event.target.value, vramUtilProportion * 100) / 100)} className="slider flex-1" />
                     <DraftNumberInput integer min={1} max={100} step={1} value={Math.round(vramUtilProportion * 100)} onValueChange={(nextValue) => setVramUtilProportion(nextValue / 100)} className="input input-bordered w-24 text-center text-sm" />
@@ -2880,12 +3375,12 @@ export default function LLMVRAMCalculator() {
                 </label>
 
                 <label>
-                  <span className="mb-2 block text-sm font-semibold text-slate-800">Reserve VRAM: {formatNumber(minReserveVramGB)} GB</span>
+                  <span className="mb-2 block text-sm font-semibold text-slate-800">{t('reserveVram')}: {formatNumber(minReserveVramGB)} GB</span>
                   <div className="flex items-center gap-3">
                     <input type="range" min={0} max={reserveSliderMax} step={0.5} value={Math.min(minReserveVramGB, reserveSliderMax)} onChange={(event) => setMinReserveVramGB(atLeast(event.target.value, 0, minReserveVramGB))} className="slider flex-1" />
                     <DraftNumberInput min={0} step={0.5} value={minReserveVramGB} onValueChange={setMinReserveVramGB} className="input input-bordered w-24 text-center text-sm" />
                   </div>
-                  <span className="mt-1 block text-xs text-slate-400">Slider max: {reserveSliderMax.toLocaleString()} GB</span>
+                  <span className="mt-1 block text-xs text-slate-400">{t('sliderMax')}: {reserveSliderMax.toLocaleString()} GB</span>
                 </label>
               </div>
             </div>
@@ -2898,18 +3393,18 @@ export default function LLMVRAMCalculator() {
               <Gauge className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-slate-950">Workspace</h2>
-              <p className="text-sm text-slate-500">Calculation output, equations, model facts, hardware facts, and marginal hints</p>
+              <h2 className="text-base font-bold text-slate-950">{t('workspace')}</h2>
+              <p className="text-sm text-slate-500">{t('workspaceDesc')}</p>
             </div>
           </div>
 
-          <div className="segmented mb-5 grid-cols-3 sm:grid-cols-5" role="tablist" aria-label="Estimator views">
+          <div className="segmented mb-5 grid-cols-3 sm:grid-cols-5" role="tablist" aria-label={t('estimatorViews')}>
             {[
-              { id: 'results', label: 'Results', icon: BarChart3 },
-              { id: 'formulas', label: 'Formulas', icon: Gauge },
-              { id: 'model', label: 'Model', icon: Layers },
-              { id: 'hardware', label: 'Hardware', icon: Cpu },
-              { id: 'hints', label: 'Hints', icon: AlertTriangle },
+              { id: 'results', label: t('results'), icon: BarChart3 },
+              { id: 'formulas', label: t('formulas'), icon: Gauge },
+              { id: 'model', label: t('model'), icon: Layers },
+              { id: 'hardware', label: t('hardware'), icon: Cpu },
+              { id: 'hints', label: t('hints'), icon: AlertTriangle },
             ].map((tab) => {
               const Icon = tab.icon;
               return (
@@ -2934,7 +3429,7 @@ export default function LLMVRAMCalculator() {
             <div className="space-y-5">
               {results?.error && (
                 <div className="rounded-xl border border-red-200 bg-red-50 p-4">
-                  <div className="font-semibold text-red-900">Configuration Issue</div>
+                  <div className="font-semibold text-red-900">{t('configurationIssue')}</div>
                   <p className="mt-1 text-sm text-red-700">{results.error}</p>
                 </div>
               )}
@@ -2942,39 +3437,39 @@ export default function LLMVRAMCalculator() {
               <div className="rounded-2xl bg-slate-950 p-5 text-white">
                 <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
                   <div>
-                    <div className="text-sm font-medium text-slate-300">Total VRAM Required</div>
+                    <div className="text-sm font-medium text-slate-300">{t('totalVramRequired')}</div>
                     <div className="mt-1 text-4xl font-black tracking-tight">{results ? results.totalVram.toFixed(1) : '0.0'} GB</div>
                   </div>
                   <div className="text-sm text-slate-300">
-                    {results ? `${formatNumber(results.usableVram)} GB usable after reserve` : 'Awaiting configuration'}
+                    {results ? `${formatNumber(results.usableVram)} ${t('usableAfterReserve')}` : t('awaitingConfiguration')}
                   </div>
                 </div>
                 <div className="mt-5 h-3 overflow-hidden rounded-full bg-white/15">
                   <div className={results?.error ? 'h-full rounded-full bg-red-400' : 'h-full rounded-full bg-indigo-400'} style={{ width: `${vramPercent}%` }} />
                 </div>
-                <div className="mt-2 text-xs text-slate-300">{formatNumber(vramPercent)}% of installed GPU memory</div>
+                <div className="mt-2 text-xs text-slate-300">{formatNumber(vramPercent)}% {t('installedGpuMemory')}</div>
               </div>
 
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                <StatTile label="Model weights" value={`${(results?.modelVram ?? 0).toFixed(1)} GB`} detail={`${quantType.toUpperCase()} weights`} />
-                <StatTile label="KV cache / request" value={`${(results?.kvCacheVram ?? 0).toFixed(1)} GB`} detail={`${formatCompact(maxLength)} tokens, ${kvQuantType.toUpperCase()}`} />
-                <StatTile label="Reserve" value={`${(results?.reservedVram ?? 0).toFixed(1)} GB`} detail={`${Math.round(vramUtilProportion * 100)}% utilization cap`} />
+                <StatTile label={t('modelWeights')} value={`${(results?.modelVram ?? 0).toFixed(1)} GB`} detail={`${quantType.toUpperCase()} ${t('weights').toLowerCase()}`} />
+                <StatTile label={t('kvCacheRequest')} value={`${(results?.kvCacheVram ?? 0).toFixed(1)} GB`} detail={`${formatCompact(maxLength)} tokens, ${kvQuantType.toUpperCase()}`} />
+                <StatTile label={t('reserve')} value={`${(results?.reservedVram ?? 0).toFixed(1)} GB`} detail={`${Math.round(vramUtilProportion * 100)}% ${t('utilizationCap')}`} />
               </div>
 
               {!results?.error && (
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div className="panel-compact p-4">
-                    <h3 className="text-sm font-bold text-slate-950">Throughput</h3>
+                    <h3 className="text-sm font-bold text-slate-950">{t('throughput')}</h3>
                     <div className="mt-4 grid grid-cols-2 gap-4">
-                      <StatTile label="Generation" value={`${(results?.genSpeed ?? 0).toFixed(0)} tok/s`} />
-                      <StatTile label="Prompt" value={`${(results?.promptSpeed ?? 0).toFixed(0)} tok/s`} />
+                      <StatTile label={t('generation')} value={`${(results?.genSpeed ?? 0).toFixed(0)} tok/s`} />
+                      <StatTile label={t('prompt')} value={`${(results?.promptSpeed ?? 0).toFixed(0)} tok/s`} />
                     </div>
                   </div>
                   <div className="panel-compact p-4">
-                    <h3 className="text-sm font-bold text-slate-950">Capacity</h3>
+                    <h3 className="text-sm font-bold text-slate-950">{t('capacity')}</h3>
                     <div className="mt-4 grid grid-cols-2 gap-4">
-                      <StatTile label="Full sequences" value={(results?.fullLengthGenCount ?? 0).toFixed(2)} />
-                      <StatTile label="Token budget" value={formatNumber(results?.maxTokenCountSimultaneous ?? 0, 0)} />
+                      <StatTile label={t('fullSequences')} value={(results?.fullLengthGenCount ?? 0).toFixed(2)} />
+                      <StatTile label={t('tokenBudget')} value={formatNumber(results?.maxTokenCountSimultaneous ?? 0, 0)} />
                     </div>
                   </div>
                 </div>
@@ -2987,8 +3482,8 @@ export default function LLMVRAMCalculator() {
               <div className="panel-compact p-4">
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
-                    <div className="text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Selected model</div>
-                    <h3 className="mt-1 text-2xl font-black tracking-tight text-slate-950">{effectiveModel?.name ?? 'None'}</h3>
+                    <div className="text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">{t('selectedModel')}</div>
+                    <h3 className="mt-1 text-2xl font-black tracking-tight text-slate-950">{effectiveModel?.name ?? t('none')}</h3>
                     <p className="mt-1 text-sm text-slate-500">{effectiveModelMeta?.family} / {effectiveModelMeta?.variant} / {effectiveModelMeta?.scale}</p>
                   </div>
                   <span className="rounded-full px-3 py-1 text-sm font-bold text-white" style={{ backgroundColor: getModelColor(effectiveModel?.name ?? '') }}>
@@ -2996,27 +3491,27 @@ export default function LLMVRAMCalculator() {
                   </span>
                 </div>
                 <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-5">
-                  <StatTile label="Total params" value={`${effectiveModel?.totalParamsB ?? 0}B`} />
-                  <StatTile label="Active params" value={`${effectiveModel?.activeParamsB ?? 0}B`} />
-                  <StatTile label="Layers" value={`${effectiveModel?.layers ?? 0}`} />
-                  <StatTile label="Native context" value={effectiveModel?.contextLength ? formatCompact(effectiveModel.contextLength) : 'Custom'} />
-                  <StatTile label="Released" value={effectiveModelRelease} />
+                  <StatTile label={t('totalParams')} value={`${effectiveModel?.totalParamsB ?? 0}B`} />
+                  <StatTile label={t('activeParams')} value={`${effectiveModel?.activeParamsB ?? 0}B`} />
+                  <StatTile label={t('layers')} value={`${effectiveModel?.layers ?? 0}`} />
+                  <StatTile label={t('nativeContext')} value={effectiveModel?.contextLength ? formatCompact(effectiveModel.contextLength) : t('customValue')} />
+                  <StatTile label={t('released')} value={effectiveModelRelease} />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="panel-compact p-4">
-                  <h4 className="mb-3 text-sm font-bold text-slate-950">Attention / KV</h4>
+                  <h4 className="mb-3 text-sm font-bold text-slate-950">{t('attentionKv')}</h4>
                   <div className="space-y-2 text-sm">
-                    <div className="flex justify-between gap-3"><span className="text-slate-500">Hidden size</span><span className="font-semibold">{effectiveModel?.hiddenSize ?? 0}</span></div>
-                    <div className="flex justify-between gap-3"><span className="text-slate-500">KV heads</span><span className="font-semibold">{effectiveModel?.numKVHeads ?? 0}</span></div>
-                    <div className="flex justify-between gap-3"><span className="text-slate-500">Head dim</span><span className="font-semibold">{effectiveModel?.headDim ?? 0}</span></div>
-                    <div className="flex justify-between gap-3"><span className="text-slate-500">KV bytes/value</span><span className="font-semibold">{kvByteValue}</span></div>
+                    <div className="flex justify-between gap-3"><span className="text-slate-500">{t('hiddenSize')}</span><span className="font-semibold">{effectiveModel?.hiddenSize ?? 0}</span></div>
+                    <div className="flex justify-between gap-3"><span className="text-slate-500">{t('kvHeads')}</span><span className="font-semibold">{effectiveModel?.numKVHeads ?? 0}</span></div>
+                    <div className="flex justify-between gap-3"><span className="text-slate-500">{t('headDim')}</span><span className="font-semibold">{effectiveModel?.headDim ?? 0}</span></div>
+                    <div className="flex justify-between gap-3"><span className="text-slate-500">{t('kvBytesValue')}</span><span className="font-semibold">{kvByteValue}</span></div>
                   </div>
                 </div>
                 <div className="panel-compact p-4">
-                  <h4 className="mb-3 text-sm font-bold text-slate-950">Model Sources</h4>
-                  <SourceLinks sources={modelSources} />
+                  <h4 className="mb-3 text-sm font-bold text-slate-950">{t('modelSources')}</h4>
+                  <SourceLinks locale={locale} sources={modelSources} />
                   {effectiveModel?.sourceNote && <p className="mt-3 text-xs text-slate-500">{effectiveModel.sourceNote}</p>}
                 </div>
               </div>
@@ -3028,34 +3523,34 @@ export default function LLMVRAMCalculator() {
               <div className="panel-compact p-4">
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
-                    <div className="text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Selected hardware</div>
-                    <h3 className="mt-1 text-2xl font-black tracking-tight text-slate-950">{effectiveCard ? stripVendor(effectiveCard.name) : 'None'}</h3>
-                    <p className="mt-1 text-sm text-slate-500">{effectiveCard ? `${gpuClass(effectiveCard)} / ${inferArchitecture(effectiveCard)}` : 'No GPU selected'}</p>
+                    <div className="text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">{t('selectedHardware')}</div>
+                    <h3 className="mt-1 text-2xl font-black tracking-tight text-slate-950">{effectiveCard ? stripVendor(effectiveCard.name) : t('none')}</h3>
+                    <p className="mt-1 text-sm text-slate-500">{effectiveCard ? `${gpuClass(effectiveCard)} / ${inferArchitecture(effectiveCard)}` : t('noGpuSelected')}</p>
                   </div>
                   <span className="h-4 w-4 rounded-full" style={{ backgroundColor: getGpuColor(effectiveCard?.name ?? '') }} />
                 </div>
                 <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-5">
-                  <StatTile label="VRAM / GPU" value={`${effectiveCard?.vramGb ?? 0} GB`} />
-                  <StatTile label="Total VRAM" value={`${formatNumber(totalGpuVram)} GB`} />
-                  <StatTile label="Bandwidth" value={`${formatNumber(effectiveCard?.memoryBandwidthGBs ?? 0, 0)} GB/s`} />
+                  <StatTile label={t('vramPerGpu')} value={`${effectiveCard?.vramGb ?? 0} GB`} />
+                  <StatTile label={t('totalVram')} value={`${formatNumber(totalGpuVram)} GB`} />
+                  <StatTile label={t('bandwidth')} value={`${formatNumber(effectiveCard?.memoryBandwidthGBs ?? 0, 0)} GB/s`} />
                   <StatTile label="FP16" value={`${formatNumber(effectiveCard?.processPower.fp16 ?? 0)} TFLOPS`} />
-                  <StatTile label="Released" value={effectiveGpuRelease} />
+                  <StatTile label={t('released')} value={effectiveGpuRelease} />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="panel-compact p-4">
-                  <h4 className="mb-3 text-sm font-bold text-slate-950">Runtime Defaults</h4>
+                  <h4 className="mb-3 text-sm font-bold text-slate-950">{t('runtimeDefaults')}</h4>
                   <div className="space-y-2 text-sm">
-                    <div className="flex justify-between gap-3"><span className="text-slate-500">KV quant</span><span className="font-semibold">{kvQuantType.toUpperCase()}</span></div>
-                    <div className="flex justify-between gap-3"><span className="text-slate-500">GPU count</span><span className="font-semibold">{parallelGPUs}</span></div>
-                    <div className="flex justify-between gap-3"><span className="text-slate-500">Utilization</span><span className="font-semibold">{Math.round(vramUtilProportion * 100)}%</span></div>
-                    <div className="flex justify-between gap-3"><span className="text-slate-500">Reserve</span><span className="font-semibold">{formatNumber(minReserveVramGB)} GB</span></div>
+                    <div className="flex justify-between gap-3"><span className="text-slate-500">{t('kvQuant')}</span><span className="font-semibold">{kvQuantType.toUpperCase()}</span></div>
+                    <div className="flex justify-between gap-3"><span className="text-slate-500">{t('gpuCount')}</span><span className="font-semibold">{parallelGPUs}</span></div>
+                    <div className="flex justify-between gap-3"><span className="text-slate-500">{t('utilization')}</span><span className="font-semibold">{Math.round(vramUtilProportion * 100)}%</span></div>
+                    <div className="flex justify-between gap-3"><span className="text-slate-500">{t('reserve')}</span><span className="font-semibold">{formatNumber(minReserveVramGB)} GB</span></div>
                   </div>
                 </div>
                 <div className="panel-compact p-4">
-                  <h4 className="mb-3 text-sm font-bold text-slate-950">Hardware Sources</h4>
-                  <SourceLinks sources={gpuSources} />
+                  <h4 className="mb-3 text-sm font-bold text-slate-950">{t('hardwareSources')}</h4>
+                  <SourceLinks locale={locale} sources={gpuSources} />
                   {effectiveCard?.sourceNote && <p className="mt-3 text-xs text-slate-500">{effectiveCard.sourceNote}</p>}
                 </div>
               </div>
@@ -3065,39 +3560,42 @@ export default function LLMVRAMCalculator() {
           {activeTab === 'hints' && (
             <div className="space-y-5">
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                <StatTile label="Weight margin" value={`${formatNumber(currentWeightSaving)} GB`} detail="Saved vs FP16 weights" />
+                <StatTile label={t('weightMargin')} value={`${formatNumber(currentWeightSaving)} GB`} detail={t('savedVsFp16Weights')} />
                 <StatTile
-                  label="KV margin"
+                  label={t('kvMargin')}
                   value={`${currentKvSaving >= 0 ? '' : '+'}${formatNumber(Math.abs(currentKvSaving))} GB`}
-                  detail={currentKvSaving >= 0 ? 'Saved vs FP16 KV' : 'Extra vs FP16 KV'}
+                  detail={currentKvSaving >= 0 ? t('savedVsFp16Kv') : t('extraVsFp16Kv')}
                 />
-                <StatTile label="Backend risk" value={supportRiskLabel} detail={`${inferArchitecture(effectiveCard ?? customCard)} / ${quantType.toUpperCase()} / ${kvQuantType.toUpperCase()}`} />
+                <StatTile label={t('backendRisk')} value={supportRiskLabel} detail={`${inferArchitecture(effectiveCard ?? customCard)} / ${quantType.toUpperCase()} / ${kvQuantType.toUpperCase()}`} />
               </div>
 
               <div className="panel-compact p-4">
                 <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <h3 className="text-sm font-bold text-slate-950">Selection Support Matrix</h3>
-                    <p className="mt-1 text-xs text-slate-500">Capacity estimates are local math; support status follows current vLLM/NVIDIA notes.</p>
+                    <h3 className="text-sm font-bold text-slate-950">{t('supportMatrix')}</h3>
+                    <p className="mt-1 text-xs text-slate-500">{t('supportMatrixDesc')}</p>
                   </div>
                   <span className={`rounded-full border px-3 py-1 text-xs font-bold ${supportStatusClass(unsupportedSupportCount > 0 ? 'Unsupported' : partialSupportCount > 0 ? 'Partial' : 'Supported')}`}>
                     {supportRiskLabel}
                   </span>
                 </div>
                 <div className="space-y-2">
-                  {supportRows.map((row) => (
-                    <div key={row.label} className="rounded-xl border border-slate-200 bg-white p-3">
-                      <div className="flex flex-wrap items-start justify-between gap-3">
-                        <div>
-                          <div className="text-sm font-bold text-slate-950">{row.label}</div>
-                          <p className="mt-1 text-xs leading-5 text-slate-600">{row.note}</p>
+                  {supportRows.map((row) => {
+                    const displayRow = localizeSupportRow(row, locale);
+                    return (
+                      <div key={row.label} className="rounded-xl border border-slate-200 bg-white p-3">
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                          <div>
+                            <div className="text-sm font-bold text-slate-950">{displayRow.label}</div>
+                            <p className="mt-1 text-xs leading-5 text-slate-600">{displayRow.note}</p>
+                          </div>
+                          <span className={`rounded-full border px-2.5 py-1 text-xs font-bold ${supportStatusClass(row.status)}`}>
+                            {row.status === 'Supported' ? t('supported') : row.status === 'Partial' ? t('partial') : row.status === 'Unsupported' ? t('unsupported') : t('check')}
+                          </span>
                         </div>
-                        <span className={`rounded-full border px-2.5 py-1 text-xs font-bold ${supportStatusClass(row.status)}`}>
-                          {row.status}
-                        </span>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
@@ -3120,8 +3618,8 @@ export default function LLMVRAMCalculator() {
               </div>
 
               <div className="panel-compact p-4">
-                <h4 className="mb-3 text-sm font-bold text-slate-950">Supplement Sources</h4>
-                <SourceLinks sources={guidanceSourceLinks} />
+                <h4 className="mb-3 text-sm font-bold text-slate-950">{t('supplementSources')}</h4>
+                <SourceLinks locale={locale} sources={guidanceSourceLinks} />
               </div>
             </div>
           )}
@@ -3130,9 +3628,9 @@ export default function LLMVRAMCalculator() {
             <div className="space-y-5">
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 {[
-                  { label: 'Weights', value: results?.modelVram ?? 0, color: 'bg-blue-500' },
-                  { label: 'KV Cache', value: results?.kvCacheVram ?? 0, color: 'bg-green-500' },
-                  { label: 'Reserve', value: results?.reservedVram ?? 0, color: 'bg-slate-500' },
+                  { label: t('weights'), value: results?.modelVram ?? 0, color: 'bg-blue-500' },
+                  { label: t('kvCache'), value: results?.kvCacheVram ?? 0, color: 'bg-green-500' },
+                  { label: t('reserve'), value: results?.reservedVram ?? 0, color: 'bg-slate-500' },
                 ].map((item) => (
                   <div key={item.label} className="metric-tile">
                     <div className="mb-2 flex justify-between text-sm">
@@ -3154,6 +3652,12 @@ export default function LLMVRAMCalculator() {
                     equation={card.equation}
                     icon={card.icon}
                     interpretation={card.interpretation}
+                    labels={{
+                      equation: t('equation'),
+                      variables: t('variables'),
+                      currentSubstitution: t('currentSubstitution'),
+                      result: t('result'),
+                    }}
                     purpose={card.purpose}
                     result={card.result}
                     substitution={card.substitution}
@@ -3165,17 +3669,17 @@ export default function LLMVRAMCalculator() {
 
               <div className="panel-compact p-4">
                 <div className="mb-3 flex items-center justify-between gap-3">
-                  <h4 className="font-bold text-slate-950">Capacity Composition</h4>
-                  <span className="text-sm text-slate-500">{formatNumber(results?.usableVram ?? 0)} GB usable</span>
+                  <h4 className="font-bold text-slate-950">{t('capacityComposition')}</h4>
+                  <span className="text-sm text-slate-500">{formatNumber(results?.usableVram ?? 0)} GB {t('usable')}</span>
                 </div>
                 <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3 text-sm">
-                  <span className="text-slate-600">Weights</span>
+                  <span className="text-slate-600">{t('weights')}</span>
                   <div className="h-2 overflow-hidden rounded-full bg-slate-100">
                     <div className="h-full rounded-full bg-blue-500" style={{ width: `${Math.min(100, ((results?.modelVram ?? 0) / Math.max(1, results?.usableVram ?? 1)) * 100)}%` }} />
                   </div>
                   <span className="font-semibold">{formatNumber(results?.modelVram ?? 0)} GB</span>
 
-                  <span className="text-slate-600">KV Budget</span>
+                  <span className="text-slate-600">{t('kvBudget')}</span>
                   <div className="h-2 overflow-hidden rounded-full bg-slate-100">
                     <div className="h-full rounded-full bg-green-500" style={{ width: `${Math.min(100, ((results?.usableKvCacheVram ?? 0) / Math.max(1, results?.usableVram ?? 1)) * 100)}%` }} />
                   </div>
