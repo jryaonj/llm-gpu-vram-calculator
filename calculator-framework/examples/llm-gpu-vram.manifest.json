@@ -1,0 +1,206 @@
+{
+  "schemaVersion": "0.1.0",
+  "id": "llm-gpu-vram",
+  "name": "LLM GPU VRAM Calculator",
+  "domain": "llm_inference_resource_planning",
+  "intent": {
+    "primaryQuestion": "Can this model fit and run on this GPU configuration?",
+    "userNeed": "Estimate VRAM capacity, KV cache budget, and rough prompt/decode throughput before choosing hardware.",
+    "planningHorizon": "pre-deployment sizing"
+  },
+  "entities": [
+    {
+      "id": "model",
+      "label": "Model",
+      "role": "workload",
+      "catalogBacked": true,
+      "sourceBacked": true,
+      "customAllowed": true,
+      "fields": ["name", "family", "paramsB", "activeParamsB", "layers", "numKVHeads", "headDim", "contextLength", "quantType"]
+    },
+    {
+      "id": "gpu",
+      "label": "GPU",
+      "role": "environment",
+      "catalogBacked": true,
+      "sourceBacked": true,
+      "customAllowed": true,
+      "fields": ["name", "vendor", "architecture", "vramGb", "memoryBandwidthGBs", "processPower", "kvQuantType"]
+    },
+    {
+      "id": "runtimeAssumption",
+      "label": "Runtime assumptions",
+      "role": "assumption",
+      "catalogBacked": false,
+      "sourceBacked": false,
+      "customAllowed": true,
+      "fields": ["weightQuantization", "kvQuantization", "concurrentUsers", "gpuCount", "maxContextLength", "reserveVramGb", "vramUtilization"]
+    }
+  ],
+  "catalogs": [
+    {
+      "id": "modelCatalog",
+      "entityId": "model",
+      "sourceBacked": true,
+      "fields": ["identity", "capacity", "architecture", "releaseDate", "sources", "sourceNote"]
+    },
+    {
+      "id": "gpuCatalog",
+      "entityId": "gpu",
+      "sourceBacked": true,
+      "fields": ["identity", "memory", "bandwidth", "computeProxy", "releaseDate", "sources", "sourceNote"]
+    }
+  ],
+  "inputModes": ["catalog", "structured", "custom", "numeric", "preset"],
+  "guidedFlow": {
+    "autoProgress": true,
+    "finalActionRequired": true,
+    "steps": [
+      {
+        "id": "chooseModel",
+        "title": "Choose model",
+        "question": "What model or workload is being estimated?",
+        "entityIds": ["model"],
+        "completion": "selection"
+      },
+      {
+        "id": "chooseHardware",
+        "title": "Choose GPU hardware",
+        "question": "What hardware or environment will run it?",
+        "entityIds": ["gpu"],
+        "completion": "selection",
+        "lockedUntil": "chooseModel"
+      },
+      {
+        "id": "setRuntime",
+        "title": "Set runtime assumptions",
+        "question": "What precision, concurrency, context, and reserve assumptions apply?",
+        "entityIds": ["runtimeAssumption"],
+        "completion": "valid-inputs",
+        "lockedUntil": "chooseHardware"
+      },
+      {
+        "id": "computeResult",
+        "title": "Compute result",
+        "question": "What is the estimated capacity and throughput result?",
+        "entityIds": ["model", "gpu", "runtimeAssumption"],
+        "completion": "explicit-action",
+        "lockedUntil": "setRuntime"
+      }
+    ]
+  },
+  "workspaceTabs": ["results", "formulas", "workloadFacts", "environmentFacts", "hints", "theory"],
+  "outputs": [
+    {
+      "id": "totalVram",
+      "label": "Total VRAM required",
+      "kind": "capacity",
+      "unit": "GB",
+      "blocking": true
+    },
+    {
+      "id": "usableVram",
+      "label": "Usable VRAM",
+      "kind": "capacity",
+      "unit": "GB"
+    },
+    {
+      "id": "generationTokensPerSecond",
+      "label": "Generation throughput",
+      "kind": "throughput",
+      "unit": "tokens/s"
+    },
+    {
+      "id": "promptTokensPerSecond",
+      "label": "Prompt throughput",
+      "kind": "throughput",
+      "unit": "tokens/s"
+    },
+    {
+      "id": "maxTokenCountSimultaneous",
+      "label": "Simultaneous token budget",
+      "kind": "count",
+      "unit": "tokens"
+    }
+  ],
+  "formulas": {
+    "requiresTrace": true,
+    "heuristicConstantsVisible": true,
+    "families": [
+      {
+        "id": "modelWeightMemory",
+        "label": "Model weight memory",
+        "purpose": "Estimate loaded weight footprint from total parameters and quantization.",
+        "sourceBacked": false
+      },
+      {
+        "id": "kvCacheMemory",
+        "label": "KV cache memory",
+        "purpose": "Estimate per-request cache memory from model geometry, context length, and KV precision.",
+        "sourceBacked": true
+      },
+      {
+        "id": "usableVramBudget",
+        "label": "Usable VRAM budget",
+        "purpose": "Subtract reserve and utilization guard rails from installed memory.",
+        "sourceBacked": false
+      },
+      {
+        "id": "throughputProxy",
+        "label": "Throughput proxy",
+        "purpose": "Estimate prompt and decode speed from compute and memory-bandwidth proxies.",
+        "sourceBacked": true
+      }
+    ]
+  },
+  "hints": {
+    "generatedFromSelection": true,
+    "severityLevels": ["critical", "warning", "info", "good"]
+  },
+  "sourcePolicy": {
+    "requiredForCatalogFacts": true,
+    "officialSourcesWin": true,
+    "supplementalAllowed": true,
+    "derivedValuesNeedNotes": true
+  },
+  "exportTargets": [
+    {
+      "id": "currentEstimate",
+      "label": "Current estimate",
+      "scope": "current-estimate",
+      "format": "csv"
+    },
+    {
+      "id": "modelCatalog",
+      "label": "Model catalog",
+      "scope": "catalog",
+      "format": "csv"
+    },
+    {
+      "id": "hardwareCatalog",
+      "label": "Hardware catalog",
+      "scope": "catalog",
+      "format": "csv"
+    }
+  ],
+  "i18n": {
+    "locales": ["en_US", "zh_CN"],
+    "canonicalTechnicalTerms": ["GPU", "VRAM", "KV cache", "FP16", "FP8", "INT8", "INT4", "vLLM", "Hugging Face"]
+  },
+  "testing": {
+    "fixtureCountMinimum": 3,
+    "requiredChecks": [
+      "build",
+      "lint",
+      "guided-flow",
+      "numeric-draft-inputs",
+      "formula-traces",
+      "source-links",
+      "export-current",
+      "export-catalogs",
+      "i18n",
+      "responsive-overflow"
+    ]
+  }
+}
+

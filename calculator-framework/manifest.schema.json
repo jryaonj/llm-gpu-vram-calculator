@@ -1,0 +1,385 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/calculator-framework/manifest.schema.json",
+  "title": "Calculator Manifest",
+  "description": "Portable declaration for a domain calculator that runs inside the base calculator shell.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "id",
+    "name",
+    "domain",
+    "intent",
+    "entities",
+    "inputModes",
+    "guidedFlow",
+    "workspaceTabs",
+    "outputs",
+    "formulas",
+    "sourcePolicy",
+    "exportTargets",
+    "i18n",
+    "testing"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "0.1.0"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "domain": {
+      "type": "string",
+      "minLength": 1
+    },
+    "intent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primaryQuestion", "userNeed"],
+      "properties": {
+        "primaryQuestion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "userNeed": {
+          "type": "string",
+          "minLength": 1
+        },
+        "planningHorizon": {
+          "type": "string"
+        }
+      }
+    },
+    "entities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/entity"
+      }
+    },
+    "catalogs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/catalog"
+      }
+    },
+    "inputModes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["catalog", "structured", "custom", "numeric", "preset"]
+      }
+    },
+    "guidedFlow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["steps"],
+      "properties": {
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/guidedStep"
+          }
+        },
+        "autoProgress": {
+          "type": "boolean",
+          "default": true
+        },
+        "finalActionRequired": {
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
+    "workspaceTabs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["results", "formulas", "workloadFacts", "environmentFacts", "hints", "sources", "theory"]
+      }
+    },
+    "outputs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/output"
+      }
+    },
+    "formulas": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requiresTrace", "families"],
+      "properties": {
+        "requiresTrace": {
+          "type": "boolean"
+        },
+        "families": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/formulaFamily"
+          }
+        },
+        "heuristicConstantsVisible": {
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
+    "hints": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "generatedFromSelection": {
+          "type": "boolean"
+        },
+        "severityLevels": {
+          "type": "array",
+          "items": {
+            "enum": ["critical", "warning", "info", "good"]
+          }
+        }
+      }
+    },
+    "sourcePolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requiredForCatalogFacts", "officialSourcesWin", "supplementalAllowed"],
+      "properties": {
+        "requiredForCatalogFacts": {
+          "type": "boolean"
+        },
+        "officialSourcesWin": {
+          "type": "boolean"
+        },
+        "supplementalAllowed": {
+          "type": "boolean"
+        },
+        "derivedValuesNeedNotes": {
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
+    "exportTargets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/exportTarget"
+      }
+    },
+    "i18n": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["locales", "canonicalTechnicalTerms"],
+      "properties": {
+        "locales": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z]{2}_[A-Z]{2}$"
+          }
+        },
+        "canonicalTechnicalTerms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "testing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requiredChecks"],
+      "properties": {
+        "requiredChecks": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "build",
+              "lint",
+              "guided-flow",
+              "numeric-draft-inputs",
+              "formula-traces",
+              "source-links",
+              "export-current",
+              "export-catalogs",
+              "i18n",
+              "responsive-overflow"
+            ]
+          }
+        },
+        "fixtureCountMinimum": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  },
+  "$defs": {
+    "entity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "role"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-zA-Z0-9]*$"
+        },
+        "label": {
+          "type": "string"
+        },
+        "role": {
+          "enum": ["workload", "environment", "assumption", "result", "reference"]
+        },
+        "catalogBacked": {
+          "type": "boolean",
+          "default": false
+        },
+        "sourceBacked": {
+          "type": "boolean",
+          "default": false
+        },
+        "customAllowed": {
+          "type": "boolean",
+          "default": false
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "catalog": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "entityId", "sourceBacked", "fields"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-zA-Z0-9]*$"
+        },
+        "entityId": {
+          "type": "string"
+        },
+        "sourceBacked": {
+          "type": "boolean"
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "guidedStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "question", "entityIds", "completion"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-zA-Z0-9]*$"
+        },
+        "title": {
+          "type": "string"
+        },
+        "question": {
+          "type": "string"
+        },
+        "entityIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "completion": {
+          "enum": ["selection", "valid-inputs", "explicit-action"]
+        },
+        "lockedUntil": {
+          "type": "string"
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "kind"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-zA-Z0-9]*$"
+        },
+        "label": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": ["capacity", "throughput", "cost", "time", "count", "ratio", "risk", "score"]
+        },
+        "unit": {
+          "type": "string"
+        },
+        "blocking": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "formulaFamily": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "purpose"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-zA-Z0-9]*$"
+        },
+        "label": {
+          "type": "string"
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "sourceBacked": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "exportTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "scope"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-zA-Z0-9]*$"
+        },
+        "label": {
+          "type": "string"
+        },
+        "scope": {
+          "enum": ["current-estimate", "catalog", "sources", "all"]
+        },
+        "format": {
+          "enum": ["csv", "json"],
+          "default": "csv"
+        }
+      }
+    }
+  }
+}
+
