@@ -39,7 +39,7 @@ body {
 }
 
 /* Smooth transitions for all interactive elements */
-button, .btn, .card, .alert {
+button, .btn, .card, .alert, .header-icon-action, .pretty-select-trigger, .pretty-select-option {
   transition: all 0.2s ease;
 }
 
@@ -58,6 +58,48 @@ pre,
   background: rgba(255, 255, 255, 0.88);
   border-bottom: 1px solid rgba(15, 23, 42, 0.08);
   backdrop-filter: blur(18px);
+}
+
+.header-icon-action {
+  min-height: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  color: #4b5563;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.header-icon-action:hover {
+  background: #f9fafb;
+  color: #111827;
+}
+
+.header-icon-action:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+.header-language-toggle svg {
+  transform-origin: center;
+  transition: color 0.2s ease, transform 0.24s ease;
+}
+
+.header-language-toggle[data-locale='zh_CN'] svg {
+  transform: rotate(180deg);
+}
+
+.header-language-toggle[data-locale='zh_CN'] {
+  background: #eef2ff;
+  color: #312e81;
+}
+
+.header-language-toggle[data-locale='zh_CN']:hover {
+  background: #e0e7ff;
+  color: #312e81;
 }
 
 .panel {
@@ -167,6 +209,149 @@ pre,
   border: 1px solid #d9dee8;
   border-radius: 10px;
   background: #ffffff;
+}
+
+.pretty-select {
+  position: relative;
+  min-width: 0;
+  width: 100%;
+}
+
+.pretty-select-trigger {
+  height: 2.55rem;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border: 1px solid #d9dee8;
+  border-radius: 10px;
+  background: #ffffff;
+  padding: 0.62rem 0.75rem;
+  color: #0f172a;
+  font-size: 0.875rem;
+  font-weight: 650;
+  line-height: 1.2;
+  text-align: left;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.input.input-bordered {
+  height: 2.55rem;
+  border: 1px solid #d9dee8;
+  border-radius: 10px;
+  background: #ffffff;
+  padding: 0.62rem 0.75rem;
+  color: #0f172a;
+  font-size: 0.875rem;
+  font-weight: 650;
+  line-height: 1.2;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input.input-bordered:hover {
+  border-color: #b8c1d1;
+  background: #fbfcff;
+}
+
+.input.input-bordered:focus,
+.input.input-bordered:focus-visible {
+  outline: none;
+  border-color: #818cf8;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.pretty-select-trigger:hover {
+  border-color: #b8c1d1;
+  background: #fbfcff;
+}
+
+.pretty-select-trigger:focus-visible,
+.pretty-select[data-open='true'] .pretty-select-trigger {
+  outline: none;
+  border-color: #818cf8;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.pretty-select-value,
+.pretty-select-option-label {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 650;
+}
+
+.pretty-select-marker {
+  width: 0.55rem;
+  height: 0.55rem;
+  flex: 0 0 auto;
+  border-radius: 999px;
+}
+
+.pretty-select-chevron {
+  flex: 0 0 auto;
+  color: #64748b;
+  transition: transform 0.2s ease;
+}
+
+.pretty-select[data-open='true'] .pretty-select-chevron {
+  transform: rotate(180deg);
+}
+
+.pretty-select-menu {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  right: 0;
+  z-index: 80;
+  max-height: min(18rem, 56vh);
+  overflow-y: auto;
+  border: 1px solid #dbe1ec;
+  border-radius: 10px;
+  background: #ffffff;
+  padding: 0.25rem;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.14);
+}
+
+.pretty-select-option {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-radius: 8px;
+  padding: 0.6rem 0.65rem;
+  color: #334155;
+  text-align: left;
+}
+
+.pretty-select-option:hover,
+.pretty-select-option:focus-visible {
+  outline: none;
+  background: #f3f6fb;
+  color: #0f172a;
+}
+
+.pretty-select-option[data-active='true'] {
+  background: #eef2ff;
+  color: #312e81;
+}
+
+.pretty-select-option-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.pretty-select-option-description {
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 500;
 }
 
 .source-link-text,
@@ -544,6 +729,13 @@ button:focus {
 
 .dropdown-item:hover {
   background: #f9fafb;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header-language-toggle svg,
+  .pretty-select-chevron {
+    transition: none;
+  }
 }
 
 /* Clean toggle (unused now, but might be used later) */

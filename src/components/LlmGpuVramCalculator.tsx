@@ -1,10 +1,12 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
   AlertTriangle,
   ArrowLeft,
   BarChart3,
   BookOpen,
+  Check,
   CheckCircle2,
+  ChevronDown,
   Columns2,
   Cpu,
   Database,
@@ -13,7 +15,6 @@ import {
   Gauge,
   HardDrive,
   Info,
-  Languages,
   Layers,
   List,
   Search,
@@ -83,6 +84,21 @@ interface DraftNumberInputProps {
   value: number;
 }
 
+interface PrettySelectOption<TValue extends string> {
+  value: TValue;
+  label: ReactNode;
+  description?: ReactNode;
+  markerColor?: string;
+}
+
+interface PrettySelectProps<TValue extends string> {
+  ariaLabel: string;
+  className?: string;
+  onChange: (value: TValue) => void;
+  options: Array<PrettySelectOption<TValue>>;
+  value: TValue;
+}
+
 interface DetailLayoutOption {
   id: DetailLayoutRatio;
   label: string;
@@ -93,7 +109,6 @@ interface DetailLayoutOption {
 
 interface LLMVRAMCalculatorProps {
   locale?: Locale;
-  onLocaleChange?: (locale: Locale) => void;
 }
 
 const translations = {
@@ -1367,6 +1382,97 @@ function DraftNumberInput({
   );
 }
 
+function PrettySelect<TValue extends string>({
+  ariaLabel,
+  className = '',
+  onChange,
+  options,
+  value,
+}: PrettySelectProps<TValue>) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const menuId = useId();
+  const selected = options.find((option) => option.value === value) ?? options[0];
+
+  useEffect(() => {
+    if (!open) return;
+
+    function handlePointerDown(event: MouseEvent) {
+      if (rootRef.current?.contains(event.target as Node)) return;
+      setOpen(false);
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') setOpen(false);
+    }
+
+    document.addEventListener('mousedown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [open]);
+
+  return (
+    <div ref={rootRef} className={`pretty-select ${className}`} data-open={open}>
+      <button
+        type="button"
+        aria-expanded={open}
+        aria-controls={menuId}
+        aria-haspopup="listbox"
+        aria-label={ariaLabel}
+        className="pretty-select-trigger"
+        onClick={() => setOpen((current) => !current)}
+        onKeyDown={(event) => {
+          if (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            setOpen(true);
+          }
+        }}
+      >
+        <span className="pretty-select-value">
+          {selected?.markerColor && <span className="pretty-select-marker" style={{ backgroundColor: selected.markerColor }} />}
+          <span className="min-w-0 truncate">{selected?.label ?? value}</span>
+        </span>
+        <ChevronDown className="pretty-select-chevron h-4 w-4" />
+      </button>
+
+      {open && (
+        <div id={menuId} role="listbox" className="pretty-select-menu" aria-label={ariaLabel}>
+          {options.map((option) => {
+            const active = option.value === value;
+            return (
+              <button
+                key={option.value}
+                type="button"
+                role="option"
+                aria-selected={active}
+                className="pretty-select-option"
+                data-active={active}
+                onClick={() => {
+                  onChange(option.value);
+                  setOpen(false);
+                }}
+              >
+                <span className="pretty-select-option-main">
+                  <span className="pretty-select-option-label">
+                    {option.markerColor && <span className="pretty-select-marker" style={{ backgroundColor: option.markerColor }} />}
+                    <span className="min-w-0 truncate">{option.label}</span>
+                  </span>
+                  {option.description && <span className="pretty-select-option-description">{option.description}</span>}
+                </span>
+                {active && <Check className="h-4 w-4 text-indigo-600" />}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function FormulaCard({
   accentClass,
   equation,
@@ -1580,7 +1686,7 @@ function GuideStepPanel({
   const canOpen = !locked;
 
   return (
-    <section className="panel-compact overflow-hidden">
+    <section className="panel-compact">
       <button
         type="button"
         disabled={!canOpen}
@@ -1701,7 +1807,7 @@ function DetailSummaryCard({
   );
 }
 
-export default function LLMVRAMCalculator({ locale = 'en_US', onLocaleChange }: LLMVRAMCalculatorProps) {
+export default function LLMVRAMCalculator({ locale = 'en_US' }: LLMVRAMCalculatorProps) {
   const defaultCard = gpuCards.find((card) => card.name === 'NVIDIA RTX3090 24G') ?? gpuCards[0];
   const defaultModel = modelDefs.find((model) => model.name === 'Qwen3-8B') ?? modelDefs[0];
   const defaultMeta = modelMeta(defaultModel);
@@ -2284,21 +2390,6 @@ export default function LLMVRAMCalculator({ locale = 'en_US', onLocaleChange }: 
       <section className="panel p-4 sm:p-5">
         <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex flex-wrap items-center gap-2">
-            <label className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700">
-              <Languages className="h-4 w-4 text-slate-500" />
-              <span className="sr-only">{t('language')}</span>
-              <select
-                className="bg-transparent text-sm font-semibold outline-none"
-                value={locale}
-                aria-label={t('language')}
-                onChange={(event) => onLocaleChange?.(event.target.value as Locale)}
-              >
-                <option value="en_US">en_US</option>
-                <option value="zh_CN">zh_CN</option>
-              </select>
-            </label>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
             <button type="button" className="btn btn-sm border-slate-200 bg-white text-slate-700 hover:border-indigo-300 hover:bg-indigo-50" onClick={exportCurrentMetricsCsv}>
               <Download className="h-4 w-4" />
               {t('exportCurrent')}
@@ -2558,9 +2649,37 @@ export default function LLMVRAMCalculator({ locale = 'en_US', onLocaleChange }: 
                   <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
                     <div className="mb-3 text-sm font-bold text-slate-950">{t('detailedModelChoice')}</div>
                     <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-                      <label><span className="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{t('family')}</span><select value={modelFamily} onChange={(event) => selectStructuredModel(event.target.value, modelVariant, modelScale)} className="select select-bordered w-full text-sm">{modelFamilies.map((family) => <option key={family} value={family}>{family}</option>)}</select></label>
-                      <label><span className="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{t('type')}</span><select value={modelVariant} onChange={(event) => selectStructuredModel(modelFamily, event.target.value, modelScale)} className="select select-bordered w-full text-sm">{modelVariants.map((variant) => <option key={variant} value={variant}>{variant}</option>)}</select></label>
-                      <label><span className="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{t('scale')}</span><select value={modelScale} onChange={(event) => { selectStructuredModel(modelFamily, modelVariant, event.target.value); completeGuideThrough(1); setGuideStep(2); }} className="select select-bordered w-full text-sm">{modelScales.map((scale) => <option key={scale} value={scale}>{scale}</option>)}</select></label>
+                      <div>
+                        <span className="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{t('family')}</span>
+                        <PrettySelect
+                          ariaLabel={t('family')}
+                          value={modelFamily}
+                          onChange={(family) => selectStructuredModel(family, modelVariant, modelScale)}
+                          options={modelFamilies.map((family) => ({ value: family, label: family, markerColor: getModelColor(family) }))}
+                        />
+                      </div>
+                      <div>
+                        <span className="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{t('type')}</span>
+                        <PrettySelect
+                          ariaLabel={t('type')}
+                          value={modelVariant}
+                          onChange={(variant) => selectStructuredModel(modelFamily, variant, modelScale)}
+                          options={modelVariants.map((variant) => ({ value: variant, label: variant, markerColor: getModelVariantColor(variant) }))}
+                        />
+                      </div>
+                      <div>
+                        <span className="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{t('scale')}</span>
+                        <PrettySelect
+                          ariaLabel={t('scale')}
+                          value={modelScale}
+                          onChange={(scale) => {
+                            selectStructuredModel(modelFamily, modelVariant, scale);
+                            completeGuideThrough(1);
+                            setGuideStep(2);
+                          }}
+                          options={modelScales.map((scale) => ({ value: scale, label: scale }))}
+                        />
+                      </div>
                       <label><span className="mb-1 block text-sm font-medium text-slate-700">{t('totalParamsB')}</span><input type="number" min={0.01} step={0.01} value={customTotalParamsB} onChange={(event) => { setModelMode('custom'); setCustomTotalParamsB(atLeast(event.target.value, 0.01, customTotalParamsB)); }} className="input input-bordered w-full text-sm" /></label>
                       <label><span className="mb-1 block text-sm font-medium text-slate-700">{t('activeParamsB')}</span><input type="number" min={0.01} step={0.01} value={customActiveParamsB} onChange={(event) => { setModelMode('custom'); setCustomActiveParamsB(atLeast(event.target.value, 0.01, customActiveParamsB)); }} className="input input-bordered w-full text-sm" /></label>
                       <label><span className="mb-1 block text-sm font-medium text-slate-700">{t('layers')}</span><input type="number" min={1} step={1} value={customLayers} onChange={(event) => { setModelMode('custom'); setCustomLayers(integerAtLeast(event.target.value, 1, customLayers)); }} className="input input-bordered w-full text-sm" /></label>
@@ -2716,8 +2835,30 @@ export default function LLMVRAMCalculator({ locale = 'en_US', onLocaleChange }: 
                   <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
                     <div className="mb-3 text-sm font-bold text-slate-950">{t('detailedHardwareChoice')}</div>
                     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                      <label><span className="mb-1 block text-sm font-medium text-slate-700">{t('supplier')}</span><select value={customSupplier} onChange={(event) => { setGpuMode('numeric'); setCustomSupplier(event.target.value); }} className="select select-bordered w-full text-sm">{customSuppliers.map((supplier) => <option key={supplier} value={supplier}>{supplier}</option>)}</select></label>
-                      <label><span className="mb-1 block text-sm font-medium text-slate-700">{t('architecture')}</span><select value={customArchitecture} onChange={(event) => { setGpuMode('numeric'); setCustomArchitecture(event.target.value); }} className="select select-bordered w-full text-sm">{customArchitectures.map((architecture) => <option key={architecture} value={architecture}>{architecture}</option>)}</select></label>
+                      <div>
+                        <span className="mb-1 block text-sm font-medium text-slate-700">{t('supplier')}</span>
+                        <PrettySelect
+                          ariaLabel={t('supplier')}
+                          value={customSupplier}
+                          onChange={(supplier) => {
+                            setGpuMode('numeric');
+                            setCustomSupplier(supplier);
+                          }}
+                          options={customSuppliers.map((supplier) => ({ value: supplier, label: supplier, markerColor: getVendorColor(supplier as VendorFilter | 'Intel' | 'Other') }))}
+                        />
+                      </div>
+                      <div>
+                        <span className="mb-1 block text-sm font-medium text-slate-700">{t('architecture')}</span>
+                        <PrettySelect
+                          ariaLabel={t('architecture')}
+                          value={customArchitecture}
+                          onChange={(architecture) => {
+                            setGpuMode('numeric');
+                            setCustomArchitecture(architecture);
+                          }}
+                          options={customArchitectures.map((architecture) => ({ value: architecture, label: architecture }))}
+                        />
+                      </div>
                       <label><span className="mb-1 block text-sm font-medium text-slate-700">{t('vram')} (GB)</span><input type="number" min={1} step={1} value={customVramGB} onChange={(event) => { setGpuMode('numeric'); setCustomVramGB(atLeast(event.target.value, 1, customVramGB)); }} className="input input-bordered w-full text-sm" /></label>
                       <label><span className="mb-1 block text-sm font-medium text-slate-700">{t('memoryBw')}</span><input type="number" min={1} step={1} value={customMemoryBandwidthGBs} onChange={(event) => { setGpuMode('numeric'); setCustomMemoryBandwidthGBs(atLeast(event.target.value, 1, customMemoryBandwidthGBs)); }} className="input input-bordered w-full text-sm" /></label>
                     </div>
@@ -3073,36 +3214,33 @@ export default function LLMVRAMCalculator({ locale = 'en_US', onLocaleChange }: 
 
             {modelMode === 'structured' && (
               <div className="adaptive-field-grid">
-                <label className="block">
+                <div className="block">
                   <span className="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{t('family')}</span>
-                  <select
+                  <PrettySelect
+                    ariaLabel={t('family')}
                     value={modelFamily}
-                    onChange={(event) => selectStructuredModel(event.target.value, modelVariant, modelScale)}
-                    className="select select-bordered w-full text-sm"
-                  >
-                    {modelFamilies.map((family) => <option key={family} value={family}>{family}</option>)}
-                  </select>
-                </label>
-                <label className="block">
+                    onChange={(family) => selectStructuredModel(family, modelVariant, modelScale)}
+                    options={modelFamilies.map((family) => ({ value: family, label: family, markerColor: getModelColor(family) }))}
+                  />
+                </div>
+                <div className="block">
                   <span className="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{t('type')}</span>
-                  <select
+                  <PrettySelect
+                    ariaLabel={t('type')}
                     value={modelVariant}
-                    onChange={(event) => selectStructuredModel(modelFamily, event.target.value, modelScale)}
-                    className="select select-bordered w-full text-sm"
-                  >
-                    {modelVariants.map((variant) => <option key={variant} value={variant}>{variant}</option>)}
-                  </select>
-                </label>
-                <label className="block">
+                    onChange={(variant) => selectStructuredModel(modelFamily, variant, modelScale)}
+                    options={modelVariants.map((variant) => ({ value: variant, label: variant, markerColor: getModelVariantColor(variant) }))}
+                  />
+                </div>
+                <div className="block">
                   <span className="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{t('scale')}</span>
-                  <select
+                  <PrettySelect
+                    ariaLabel={t('scale')}
                     value={modelScale}
-                    onChange={(event) => selectStructuredModel(modelFamily, modelVariant, event.target.value)}
-                    className="select select-bordered w-full text-sm"
-                  >
-                    {modelScales.map((scale) => <option key={scale} value={scale}>{scale}</option>)}
-                  </select>
-                </label>
+                    onChange={(scale) => selectStructuredModel(modelFamily, modelVariant, scale)}
+                    options={modelScales.map((scale) => ({ value: scale, label: scale }))}
+                  />
+                </div>
                 {selectedModel && (
                   <div className="panel-compact sm:col-span-3 p-4">
                     <div className="flex flex-wrap items-center justify-between gap-3">
@@ -3265,18 +3403,24 @@ export default function LLMVRAMCalculator({ locale = 'en_US', onLocaleChange }: 
 
             {gpuMode === 'numeric' && (
               <div className="adaptive-field-grid">
-                <label>
+                <div>
                   <span className="mb-1 block text-sm font-medium text-slate-700">{t('supplier')}</span>
-                  <select value={customSupplier} onChange={(event) => setCustomSupplier(event.target.value)} className="select select-bordered w-full text-sm">
-                    {customSuppliers.map((supplier) => <option key={supplier} value={supplier}>{supplier}</option>)}
-                  </select>
-                </label>
-                <label>
+                  <PrettySelect
+                    ariaLabel={t('supplier')}
+                    value={customSupplier}
+                    onChange={setCustomSupplier}
+                    options={customSuppliers.map((supplier) => ({ value: supplier, label: supplier, markerColor: getVendorColor(supplier as VendorFilter | 'Intel' | 'Other') }))}
+                  />
+                </div>
+                <div>
                   <span className="mb-1 block text-sm font-medium text-slate-700">{t('architecture')}</span>
-                  <select value={customArchitecture} onChange={(event) => setCustomArchitecture(event.target.value)} className="select select-bordered w-full text-sm">
-                    {customArchitectures.map((architecture) => <option key={architecture} value={architecture}>{architecture}</option>)}
-                  </select>
-                </label>
+                  <PrettySelect
+                    ariaLabel={t('architecture')}
+                    value={customArchitecture}
+                    onChange={setCustomArchitecture}
+                    options={customArchitectures.map((architecture) => ({ value: architecture, label: architecture }))}
+                  />
+                </div>
                 <label>
                   <span className="mb-1 block text-sm font-medium text-slate-700">{t('vram')} (GB)</span>
                   <input type="number" min={1} step={1} value={customVramGB} onChange={(event) => setCustomVramGB(atLeast(event.target.value, 1, customVramGB))} className="input input-bordered w-full text-sm" />
@@ -3289,12 +3433,15 @@ export default function LLMVRAMCalculator({ locale = 'en_US', onLocaleChange }: 
                   <span className="mb-1 block text-sm font-medium text-slate-700">FP16 TFLOPS</span>
                   <input type="number" min={0} step={0.1} value={customProcessPowerFP16} onChange={(event) => setCustomProcessPowerFP16(atLeast(event.target.value, 0, customProcessPowerFP16))} className="input input-bordered w-full text-sm" />
                 </label>
-                <label>
+                <div>
                   <span className="mb-1 block text-sm font-medium text-slate-700">{t('defaultKvQuant')}</span>
-                  <select value={customKvQuantType} onChange={(event) => setCustomKvQuantType(event.target.value as KvQuantType)} className="select select-bordered w-full text-sm">
-                    {kvQuantOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-                  </select>
-                </label>
+                  <PrettySelect
+                    ariaLabel={t('defaultKvQuant')}
+                    value={customKvQuantType}
+                    onChange={setCustomKvQuantType}
+                    options={kvQuantOptions.map((option) => ({ value: option.value, label: option.label, description: option.desc }))}
+                  />
+                </div>
               </div>
             )}
           </section>

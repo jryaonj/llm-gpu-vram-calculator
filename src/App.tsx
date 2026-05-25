@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Calculator, Github, Languages } from 'lucide-react';
+import { Calculator, Github, Globe2 } from 'lucide-react';
 import LLMVRAMCalculator from './components/LlmGpuVramCalculator';
 
 type Locale = 'en_US' | 'zh_CN';
@@ -67,24 +67,22 @@ function App() {
             </div>
 
             <div className="flex shrink-0 items-center gap-2">
-              <label className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 text-sm font-semibold text-gray-600">
-                <Languages className="h-4 w-4 text-gray-400" />
-                <span className="sr-only">{t.language}</span>
-                <select
-                  aria-label={t.language}
-                  className="bg-transparent outline-none"
-                  value={locale}
-                  onChange={(event) => setLocale(event.target.value as Locale)}
-                >
-                  <option value="en_US">en_US</option>
-                  <option value="zh_CN">zh_CN</option>
-                </select>
-              </label>
+              <button
+                type="button"
+                aria-label={t.language}
+                title={t.language}
+                data-locale={locale}
+                className="header-icon-action header-language-toggle"
+                onClick={() => setLocale((current) => current === 'en_US' ? 'zh_CN' : 'en_US')}
+              >
+                <Globe2 className="h-4 w-4" />
+                <span className="text-sm">EN/中</span>
+              </button>
               <a
                 href="https://github.com/jryaonj/llm-gpu-vram-calculator"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
+                className="header-icon-action"
               >
                 <Github className="w-4 h-4" />
                 <span className="hidden sm:inline text-sm">{t.github}</span>
@@ -95,7 +93,7 @@ function App() {
       </header>
 
       <main className="flex-grow max-w-[1440px] mx-auto px-4 sm:px-6 py-6 sm:py-8 w-full">
-        <LLMVRAMCalculator locale={locale} onLocaleChange={setLocale} />
+        <LLMVRAMCalculator locale={locale} />
       </main>
 
       <footer className="bg-white/80 border-t border-gray-200 py-6">
