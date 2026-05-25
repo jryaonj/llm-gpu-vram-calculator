@@ -1,18 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;450;500;600;700;800&family=Geist+Mono:wght@450;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Clean, professional base styles */
+:root {
+  color: #172033;
+  background: #f6f7f9;
+  font-family: 'Geist', 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
 * {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: 'Geist', 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  line-height: 1.6;
+  line-height: 1.45;
+  background:
+    radial-gradient(circle at top left, rgba(79, 70, 229, 0.08), transparent 28rem),
+    radial-gradient(circle at top right, rgba(20, 184, 166, 0.06), transparent 26rem),
+    #f6f7f9;
+  color: #172033;
 }
 
 #root {
@@ -23,6 +37,201 @@ body {
 /* Smooth transitions for all interactive elements */
 button, .btn, .card, .alert {
   transition: all 0.2s ease;
+}
+
+code,
+kbd,
+pre,
+.font-mono {
+  font-family: 'Geist Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.app-shell {
+  background: transparent;
+}
+
+.app-header {
+  background: rgba(255, 255, 255, 0.88);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(18px);
+}
+
+.panel {
+  min-width: 0;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 18px 55px rgba(15, 23, 42, 0.06);
+}
+
+.panel-compact {
+  min-width: 0;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 12px;
+}
+
+.segmented {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+  padding: 4px;
+  background: #eef1f5;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  border-radius: 12px;
+}
+
+.segmented-button {
+  min-width: 0;
+  max-width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 8px 10px;
+  border-radius: 9px;
+  color: #536074;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.segmented-button[data-active='true'] {
+  background: #ffffff;
+  color: #312e81;
+  box-shadow: 0 2px 9px rgba(15, 23, 42, 0.08);
+}
+
+.picker-card {
+  min-width: 0;
+  width: 100%;
+  text-align: left;
+  border: 1px solid #e3e7ef;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 12px;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+}
+
+.picker-card:hover {
+  border-color: #b9c2d4;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.picker-card[data-active='true'] {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+}
+
+.adaptive-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+  gap: 0.5rem;
+}
+
+.adaptive-control-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
+  gap: 0.5rem;
+}
+
+.adaptive-field-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr));
+  gap: 0.75rem;
+}
+
+.adaptive-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(8.75rem, 100%), 1fr));
+  gap: 0.5rem;
+}
+
+.metric-tile {
+  min-width: 0;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 14px;
+}
+
+.field-shell {
+  min-width: 0;
+  border: 1px solid #d9dee8;
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.source-link-text,
+.wrap-anywhere {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.formula-code {
+  max-width: 100%;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  line-height: 1.55;
+}
+
+.formula-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.formula-icon {
+  display: inline-flex;
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.65rem;
+}
+
+.detail-params-compact :is(
+  .sm\:grid-cols-2,
+  .sm\:grid-cols-3,
+  .sm\:grid-cols-4,
+  .md\:grid-cols-2,
+  .md\:grid-cols-3,
+  .md\:grid-cols-4,
+  .xl\:grid-cols-4,
+  .\32xl\:grid-cols-5
+) {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.detail-params-compact .picker-card .grid-cols-3 {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.detail-params-compact .adaptive-card-grid {
+  grid-template-columns: minmax(0, 1fr);
+  max-height: 24rem;
+  scroll-snap-type: y proximity;
+}
+
+.detail-params-compact :is(.adaptive-control-grid, .adaptive-field-grid, .adaptive-choice-grid) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.detail-params-compact .adaptive-card-grid > * {
+  scroll-snap-align: start;
+}
+
+.detail-setup-stack {
+  scroll-snap-type: y proximity;
+}
+
+.detail-setup-stack > .panel {
+  scroll-snap-align: start;
 }
 
 /* Enhanced hover effects for cards */

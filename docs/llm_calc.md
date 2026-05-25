@@ -1,157 +1,134 @@
-# LLM calculation
+# LLM VRAM and Throughput Estimation Notes
 
-to estimate the speed, using following one
+This document describes the formulas used by the calculator and the intent behind the empirical constants. The numbers are planning priors, not guaranteed benchmark results.
 
-## prompting token speed
+## Estimator Shape
 
-prompting speed determines how fast an LLM can **read** some existed content.
+The calculator splits inference into two resource models:
 
-determined by the process_power of device, and the scale of LLM-model
+- Capacity: static model weights, dynamic KV cache, and reserved runtime memory.
+- Throughput: prompt prefill as a compute-bound path, and token generation as a memory-bandwidth-bound path.
 
-### equation
-the calculation is like
+This follows the practical intuition behind roofline-style analysis: a workload is limited by whichever ceiling is tighter, compute throughput or memory bandwidth.
 
-```
-prompt_speed = gpu/tpu/xpu/cpu_pp  /  full_parameters_of_a_model * num_ratio * quantization_ratio
-tok/s,aggregated    FP16 TFLOPS                                                 model_param_fp_to_fp16
-```
+Source: https://zenodo.org/records/1236156
 
-### example 1 - Qwen3-4B-AWQ on 1x NVIDIA RTX 3090
+## Catalog Data and Source Policy
 
-* Qwen3-4B-AWQ model_parameters = 4.02B
-* RTX3090 fp16 = 35.58 TFLOPS 
+The built-in catalog is intentionally practical rather than exhaustive. Model rows carry the fields needed by the estimator: total parameters, active parameters, hidden size, layer count, KV geometry, default quantization, context length, release date, and source links.
 
-modelfp_to_fp16 estimated as sqrt(2)
+Current model families include:
 
-```
-prompt_speed =  35.58 / 4.02 * 1000 / sqrt(2)
-             =  6258 tok/s
-```
+- Qwen3, Qwen3.5, and Qwen3.6 dense/MoE checkpoints.
+- DeepSeek V3, V3.1, and R1-0528 MoE checkpoints.
+- Gemma 3 dense checkpoints and Gemma 4 dense/MoE checkpoints.
 
-thus in the most ideal situation, the total (multiple task aggreated) throughput prompt speed is **6258 toks/s**
+Each built-in model and GPU should include source URLs when available. The source link usually points to the Hugging Face model card/config or an official vendor hardware page. Supplemental sources such as TechPowerUp can be useful for GPU data, but official vendor pages should win when the numbers disagree.
 
-## generate token speed
+Some fields are estimates even when the source row is strong:
 
-generating speed determines how fast an LLM can **output** new generated content.
+- INT4 weight size uses a local grouped-quantization estimate unless the catalog row explicitly stores a measured artifact size.
+- DeepSeek V3/R1 use an MLA-style KV approximation based on latent KV rank rather than normal GQA head geometry.
+- Gemma 3/4 hybrid local/global attention can allocate cache differently across runtimes, so the row documents this in `sourceNote`.
 
-determined by the bandwith of device, and the scale of LLM-model
+## Exported Data
 
-### equation
+The top control bar can save three CSV files directly in the browser:
 
-```
-generate_speed = gpu/tpu/xpu/cpu_membw  /  active_parameters_of_a_model * quantization_ratio
-tok/s,aggregated     GB/s                                                 model_param_fp_to_byte
-```
+- `llm-model-catalog.csv`: model metadata, release dates, source URLs, and notes.
+- `llm-gpu-hardware-catalog.csv`: GPU metadata, release dates, throughput fields, source URLs, and notes.
+- `llm-gpu-current-estimate.csv`: the active configuration and calculated memory/throughput metrics.
 
-### example 1 - Qwen3-4B-AWQ on 1x NVIDIA RTX 3090
+The export is generated from in-memory catalog data with a browser `Blob`; no server or static generated resource is required.
 
-* Qwen3-4B-AWQ active_model_parameters = 4.02B
-* AWQ byte ~= int4 = 0.5 byte 
-* RTX3090 membw = 936.2 GB/s
+## Internationalization
+
+The app defaults to `en_US` and includes an initial `zh_CN` locale. The first pass covers global navigation, summary labels, export controls, and major guided-result controls. Formula names, source titles, and highly technical catalog labels currently stay in English so they remain aligned with upstream model and hardware references.
+
+## Model Weight Memory
 
 ```
-generate_speed =  936.2 / 4.02 /0.5
-               =  466 tok/s
+weight_vram_gb = total_params_b * (bytes_per_param + quant_overhead)
 ```
 
-## [difficult] LLM memory consumption
+`total_params_b` is the published total parameter count in billions. Dense models use almost the same value for total and active parameters. MoE models can have much smaller active parameters per token, but total parameters still matter for loaded weight memory.
 
-LLM memory consumption is determined by the model, the task (max_input_content_length), the quantization method, the parallel number
+`bytes_per_param` is selected from the weight dtype:
 
-we would introduce below calculation
+- FP16: 2 bytes
+- FP8: 1 byte
+- INT8: 1 byte
+- INT4: 0.5 byte
 
-* model-weight
-* model-kvcache (determin by per request maxinum length)
-
-after that , we can do an estimation on how much token could a typical device/GPU process at once, aka the capacity for a typical model on specified device/GPU
-
-### model-weight memory usage
-
-using the following equation to do so
+For grouped INT4 estimates, the calculator can add a small per-parameter overhead for scale or zero-point metadata:
 
 ```
-model_weight_size = num_of_model_parameter * size_per_param
-    GB                      
+quant_overhead = 3 / awq_group_size
 ```
 
-typically, size_per_param is determined by different model_weight_quantization method
-for **Qwen3-30B-A3B-AWQ** ( param=30.53, AWQ-group = 64 ), such **size_per_param** is 
+## KV Cache Memory
 
 ```
-size_per_param = raw_value + index_stuff
-                  int4 / fp8     3/AWQ-group
-               = 0.5  + 3/64
+kv_cache_gb = layers * kv_heads * head_dim * 2 * context_tokens * kv_bytes / 2^30
 ```
 
-thus the model size 
-```
-model_weight_size = 30.53 * ( 0.5  + 3/64)
-                  = 16.70 GB
-```
+The factor `2` accounts for key and value tensors. This estimate is per full-length active request. Total serving memory multiplies it by active users or active sequences.
 
+KV cache is the main reason long-context serving grows quickly: it scales linearly with context length and with concurrent active requests.
 
-### key-value cache memory usage
+Relevant runtime support sources:
 
-k-v cache consumption determines how many token such model need to process at once, which is a project-oriented stuff.
-when the capacity of the device is not enough, then such a LLM calculation won't be carried on.
+- https://docs.vllm.ai/en/stable/features/quantization/quantized_kvcache/
+- https://vllm.ai/blog/2026-04-22-fp8-kvcache
 
-k-v cache is determined by these factors
-
-* model_parameters ( layer, num_kv_heads, head-dim )
-* model_weight_quantization (less model usage)
-* kv_quantization (allow more token)
-
+## Usable VRAM Budget
 
 ```
-kvcache_size_per_req = head_dim * num_kv_head * layer * 2 * num_max_length / 2^30 * quantization_ratio
-       GB                                         (k+v, each has one)   byte_to_gigabyte
+usable_vram_gb = gpu_vram_gb * gpu_count - max(total_vram_gb * (1 - utilization), reserve_gb)
 ```
 
+The reserve term protects against allocator fragmentation, CUDA graphs, temporary buffers, runtime metadata, and measurement error. Raising utilization makes the calculator more permissive, but it also increases out-of-memory risk.
 
-for **Qwen3-30B-A3B** model, `layer=48, num_kv_heads=4, head_dim=128`, 
-suppose a single request max length is same as train length `max_len=32768`, and kv-cache quantization method is `fp8_e4m3`, then
-
-```
-kvcache_size = 128 * 4 * 48 * 2 * 32768 / 2^30 * 1 (fp8=1byte)
-             = 1.5 GB
-```
-
-### make full capacity estimation 
-
-after we know how to calculate the memory consumption, we could make an estimation on how much token could a typical system support
-
-suppose now we have the following device, and select such model
-
-**NVIDIA RTX 3090**
-* vmem = 24 GB
-* fp16 = 35.58 TFLOPS (boosted)
-* membs = 936.2 GB/s
-
-**Qwen3-30B-A3B-AWQ**
-* model_param =  30.53 B
-* model_active_param = 3 B
-* awq_group = 64
-* layer=48, num_kv_heads=4, head_dim=128
-
-we set the model serve within kv-cache quantization `fp8_e4m3` and `max_model_length=32768`,
-`gpu_util=0.825` (82.5% vmem is used in LLM)
-
-then, we could easily get those result
+## Prompt Throughput
 
 ```
-generate_speed = 624 tok/s (upper bound)
-prompt_speed   = 824 tok/s (upper bound)
-model_weight_size = 16.70 GB
-model_kv_size_per_request = 1.50 GB (per 32768 tok, fp8_e4m3 quantization)
-total_token_capacity = ( vmem * gpu_util - model_weight_size ) / model_kv_size_per_request * max_model_length
-                     = ( 24 * 0.825 - 16.7 ) / 1.50 * 32768
-                     = 67720 token
+prompt_tok_s = fp16_tflops * 1000 * gpu_count^0.6 / (total_params_b * sqrt(2))
 ```
 
-and the parallel ratio on worst case, is
+Prompt prefill reads existing context and is treated as a dense compute-heavy path over the full model. The `1000` factor converts TFLOPS per billion parameters into an approximate token-per-second scale.
+
+The `sqrt(2)` divisor is an empirical dampener. It is not a hardware constant. It roughly accounts for non-GEMM work, imperfect kernel occupancy, runtime scheduling, attention overhead, mixed precision behavior, and batching shape.
+
+The `gpu_count^0.6` scaling term is also empirical. Prompt prefill often pays more synchronization and activation movement across devices, so this calculator assumes sublinear scaling rather than ideal linear scaling.
+
+## Generation Throughput
 
 ```
-p_ratio = total_token_capacity / max_model_length
-        = 67720 / 32768
-        = 2.06x
+gen_tok_s = bandwidth_gbs * gpu_count^0.8 / (active_params_b * weight_bytes)
 ```
+
+Autoregressive generation is treated as a bandwidth-heavy path because each new token repeatedly streams active weights and attention state. Dense models usually use active parameters equal to total parameters. MoE models should use the active routed parameters per token.
+
+The `gpu_count^0.8` term assumes decode benefits more from memory-bandwidth aggregation than prefill does, while still losing some efficiency to interconnect, tensor parallel communication, routing, and pipeline bubbles.
+
+## How to Calibrate
+
+The calculator defaults should be treated as conservative planning values:
+
+1. Run a small benchmark on the target runtime and model.
+2. Compare measured prompt and decode throughput with the calculator.
+3. Adjust the scaling exponents or effective TFLOPS/bandwidth if the local runtime is consistently above or below the estimate.
+4. Keep the capacity side stricter than the speed side; a speed miss is inconvenient, but a capacity miss can prevent the workload from starting.
+
+## Source Links
+
+- Roofline model: https://zenodo.org/records/1236156
+- NVIDIA Tensor Core overview: https://www.nvidia.com/en-eu/data-center/tensorcore/
+- NVIDIA CUDA arithmetic throughput guide: https://docs.nvidia.com/cuda/archive/10.1/pdf/CUDA_C_Programming_Guide.pdf
+- vLLM quantization matrix: https://docs.vllm.ai/en/stable/features/quantization/
+- vLLM quantized KV cache: https://docs.vllm.ai/en/stable/features/quantization/quantized_kvcache/
+- Qwen3.6-35B-A3B model card: https://huggingface.co/Qwen/Qwen3.6-35B-A3B
+- DeepSeek-V3.1 model card: https://huggingface.co/deepseek-ai/DeepSeek-V3.1
+- DeepSeek-R1-0528 model card: https://huggingface.co/deepseek-ai/DeepSeek-R1-0528
+- Gemma 3 docs: https://huggingface.co/docs/transformers/model_doc/gemma3
+- Gemma 4 docs: https://github.com/huggingface/transformers/blob/main/docs/source/en/model_doc/gemma4.md

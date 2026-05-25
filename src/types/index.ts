@@ -1,18 +1,25 @@
 export type QuantType = 'fp64' | 'fp32' | 'fp16' | 'fp8' | 'int8' | 'int4';
+export type RuntimeQuantType = 'fp16' | 'fp8' | 'int8' | 'int4';
+export type KvQuantType = RuntimeQuantType | 'fp32';
+
+export interface ReferenceLink {
+  label: string;
+  url: string;
+  note?: string;
+}
 
 export interface GPUCard {
   name: string;
   vramGb: number;               // total device VRAM in GB  
   memoryBandwidthGBs: number;   // GB/s
-  kvQuantType?: string;        // quantization type for KV cache, e.g., 'fp8', 'int8'
+  kvQuantType?: KvQuantType;    // quantization type for KV cache, e.g., 'fp8', 'int8'
   processPower: Partial<Record<QuantType, number>>;
   architecture?: string;
   cores?: number;
-  // processPower: {
-  //   fp16: number;               // TFLOPS
-  //   fp8?: number;               // optional, if different from fp16
-  //   int8?: number;
-  // };
+  releaseDate?: string;
+  source?: ReferenceLink;
+  sources?: ReferenceLink[];
+  sourceNote?: string;
 }
 
 export interface ModelDef {
@@ -23,7 +30,7 @@ export interface ModelDef {
     totalParamsB: number;         // total parameters in billions
     modelSizeGB: number;          // model size in GB
     perKVsizeFp8: number;         // per KV size in bytes when using fp8
-    quantType?: QuantType;        // quantization type
+    quantType?: RuntimeQuantType; // quantization type
     quantBits?: number;           // quantization bits
     awqGroup?: number;            // AWQ group size
     awqScale?: number;            // scale factor bits per 32-group
@@ -31,12 +38,18 @@ export interface ModelDef {
     layers?: number;              // number of layers
     numKVHeads?: number;          // number of KV heads
     headDim?: number;             // head dimension
+    contextLength?: number;       // native context length
+    maxContextLength?: number;    // extended context length when published
+    releaseDate?: string;
+    source?: ReferenceLink;
+    sources?: ReferenceLink[];
+    sourceNote?: string;
 }
 
 export interface CalcResults {
   usableVram: number;
   usableKvCacheVram: number;      // usable VRAM for KV cache
-  reservedVram: any;
+  reservedVram: number;
   modelVram: number;
   kvCacheVram: number;
   totalVram: number;
