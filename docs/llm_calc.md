@@ -29,6 +29,7 @@ Some fields are estimates even when the source row is strong:
 
 - INT4 weight size uses a local grouped-quantization estimate unless the catalog row explicitly stores a measured artifact size.
 - DeepSeek V3/R1 use an MLA-style KV approximation based on latent KV rank rather than normal GQA head geometry.
+- DeepSeek V4 uses the vLLM recipe `vram_minimum_gb` as the default served mixed FP4+FP8 weight footprint: 170 GB for Flash and 960 GB for Pro. Hugging Face `safetensors.total` is tensor element metadata, not GB; the FP8 `-Base` repos are larger, separate artifacts.
 - DeepSeek V4 uses a compressed-attention KV planning proxy based on the model-card claim that Pro needs about 10% of DeepSeek V3.2 KV cache at 1M tokens. This is a capacity prior, not an exact runtime allocator trace.
 - Gemma 3/4 hybrid local/global attention can allocate cache differently across runtimes, so the row documents this in `sourceNote`.
 
@@ -133,6 +134,8 @@ The calculator defaults should be treated as conservative planning values:
 - DeepSeek-R1-0528 model card: https://huggingface.co/deepseek-ai/DeepSeek-R1-0528
 - DeepSeek-V4 model card/report: https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro
 - DeepSeek-V4 Transformers docs: https://huggingface.co/docs/transformers/model_doc/deepseek_v4
+- vLLM DeepSeek-V4-Pro recipe: https://recipes.vllm.ai/deepseek-ai/DeepSeek-V4-Pro
+- vLLM DeepSeek-V4-Flash recipe: https://recipes.vllm.ai/deepseek-ai/DeepSeek-V4-Flash
 - Gemma 3 docs: https://huggingface.co/docs/transformers/model_doc/gemma3
 - Gemma 4 31B model card: https://huggingface.co/google/gemma-4-31B
 - Gemma 4 26B-A4B model card: https://huggingface.co/google/gemma-4-26B-A4B

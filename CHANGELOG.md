@@ -4,6 +4,8 @@
 
 ### Catalog precision follow-up
 
+- Corrected DeepSeek V4 default weight footprints to vLLM recipe deployment floors: 170 GB for Flash and 960 GB for Pro.
+- Documented why HF `safetensors.total` should not be treated as GB, and why FP8 `-Base` repos should not be mixed with the served FP4+FP8 Pro/Flash rows.
 - Added DeepSeek-V4-Flash and DeepSeek-V4-Pro with sourced total/active parameters, 1M context length, mixed FP4/FP8 artifact sizes, release dates, and compressed-attention KV-cache notes.
 - Expanded Gemma 4 from the previous two medium entries to all four official sizes: E2B, E4B, 26B-A4B, and 31B.
 - Corrected Gemma4-26B-A4B from 26.1B/4B to the model-card values 25.2B total and 3.8B active.

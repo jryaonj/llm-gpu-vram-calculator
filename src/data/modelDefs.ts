@@ -54,6 +54,12 @@ const deepseekV4Report = {
   note: 'Technical report for the DeepSeek V4 Pro and Flash preview models.',
 };
 
+const deepseekV4Recipe = (model: 'DeepSeek-V4-Flash' | 'DeepSeek-V4-Pro') => ({
+  label: `vLLM ${model} serving recipe`,
+  url: `https://recipes.vllm.ai/deepseek-ai/${model}`,
+  note: 'vLLM recipe with default precision, serving args, supported hardware, and deployment VRAM floor.',
+});
+
 const gemmaSource = (model: string) => ({
   label: `${model} model card`,
   url: `https://huggingface.co/google/${model}`,
@@ -86,7 +92,7 @@ const gemma4Source = (model: string) => ({
 
 const estimatedInt4Note = 'Weight size is an INT4/AWQ-style local estimate; architecture and parameter counts come from the linked model card.';
 const deepseekMlaNote = 'Weight size follows the published FP8 checkpoint path. KV cache uses a simplified MLA latent-cache estimate from kv_lora_rank + qk_rope_head_dim rather than standard GQA head geometry.';
-const deepseekV4CacheNote = 'Weight size follows the published mixed FP4/FP8 artifact size where available. KV cache uses the model-card 10%-of-V3.x long-context cache claim as a compressed-attention planning proxy.';
+const deepseekV4CacheNote = 'Weight size uses the vLLM recipe VRAM floor for the served mixed FP4+FP8 checkpoint. HF safetensors.total is tensor element metadata, not bytes; the FP8 Base checkpoint is a different, larger served artifact. KV cache uses a compressed-attention planning proxy.';
 const gemmaHybridAttentionNote = 'Weight size is an INT4/AWQ-style local estimate. KV cache is a simplified estimate for Gemma hybrid local/global attention and may differ from exact runtime allocation.';
 
 const modelReleaseDates: Record<string, string> = {
@@ -587,7 +593,7 @@ const baseModelDefs: ModelDef[] = [
     hiddenSize: 4096,
     activeParamsB: 13,
     totalParamsB: 284,
-    modelSizeGB: 158.07,
+    modelSizeGB: 170,
     perKVsizeFp8: 43 * 58,
     quantType: 'int4',
     quantBits: 4,
@@ -596,7 +602,7 @@ const baseModelDefs: ModelDef[] = [
     headDim: 58,
     contextLength: 1048576,
     source: deepseekSource('DeepSeek-V4-Flash'),
-    sources: [deepseekSource('DeepSeek-V4-Flash'), deepseekSource('DeepSeek-V4-Flash-Base'), deepseekV4Docs, deepseekV4Report],
+    sources: [deepseekSource('DeepSeek-V4-Flash'), deepseekV4Recipe('DeepSeek-V4-Flash'), deepseekSource('DeepSeek-V4-Flash-Base'), deepseekV4Docs, deepseekV4Report],
     sourceNote: deepseekV4CacheNote,
   },
   {
@@ -605,7 +611,7 @@ const baseModelDefs: ModelDef[] = [
     hiddenSize: 7168,
     activeParamsB: 49,
     totalParamsB: 1600,
-    modelSizeGB: 861.61,
+    modelSizeGB: 960,
     perKVsizeFp8: 61 * 58,
     quantType: 'int4',
     quantBits: 4,
@@ -614,7 +620,7 @@ const baseModelDefs: ModelDef[] = [
     headDim: 58,
     contextLength: 1048576,
     source: deepseekSource('DeepSeek-V4-Pro'),
-    sources: [deepseekSource('DeepSeek-V4-Pro'), deepseekSource('DeepSeek-V4-Pro-Base'), deepseekV4Docs, deepseekV4Report],
+    sources: [deepseekSource('DeepSeek-V4-Pro'), deepseekV4Recipe('DeepSeek-V4-Pro'), deepseekSource('DeepSeek-V4-Pro-Base'), deepseekV4Docs, deepseekV4Report],
     sourceNote: deepseekV4CacheNote,
   },
   {
