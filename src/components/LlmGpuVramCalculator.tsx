@@ -32,7 +32,7 @@ import { modelDefs } from '../data/modelDefs.ts';
 type CalculatorTab = 'results' | 'formulas' | 'model' | 'hardware' | 'hints';
 type ModelPickerMode = 'catalog' | 'structured' | 'custom';
 type GpuPickerMode = 'catalog' | 'numeric';
-type VendorFilter = 'All' | 'NVIDIA' | 'AMD' | 'Intel';
+type VendorFilter = 'All' | 'NVIDIA' | 'AMD' | 'Intel' | 'Hygon';
 type EntryMode = 'guided' | 'detailed' | 'theory';
 type DetailLayoutMode = 'auto' | 'manual';
 type DetailLayoutRatio = '25-75' | '33-67' | '50-50' | '67-33' | '75-25';
@@ -565,8 +565,8 @@ const kvQuantOptions: Array<{ value: KvQuantType; label: string; desc: string }>
   { value: 'fp32', label: 'FP32', desc: 'Fallback/debug' },
 ];
 
-const customSuppliers = ['NVIDIA', 'AMD', 'Intel', 'Other'];
-const customArchitectures = ['Blackwell', 'Hopper', 'Ada', 'Ampere', 'CDNA4', 'CDNA3', 'RDNA4', 'RDNA3', 'Custom'];
+const customSuppliers = ['NVIDIA', 'AMD', 'Intel', 'Hygon', 'Other'];
+const customArchitectures = ['Blackwell', 'Hopper', 'Ada', 'Ampere', 'CDNA4', 'CDNA3', 'CDNA-derived', 'RDNA4', 'RDNA3', 'Xe2', 'Custom'];
 const detailLayoutOptions: DetailLayoutOption[] = [
   { id: '25-75', label: '25:75', params: 25, workspace: 75, className: 'xl:grid-cols-[minmax(280px,0.25fr)_minmax(0,0.75fr)]' },
   { id: '33-67', label: '33:67', params: 33, workspace: 67, className: 'xl:grid-cols-[minmax(320px,0.33fr)_minmax(0,0.67fr)]' },
@@ -761,6 +761,7 @@ function getGpuVendor(name: string): VendorFilter | 'Other' {
   if (name.includes('NVIDIA')) return 'NVIDIA';
   if (name.includes('AMD')) return 'AMD';
   if (name.includes('Intel')) return 'Intel';
+  if (name.includes('Hygon') || name.includes('DCU')) return 'Hygon';
   return 'Other';
 }
 
@@ -768,6 +769,7 @@ function getVendorColor(vendor: VendorFilter | 'Other'): string {
   if (vendor === 'NVIDIA') return '#76b900';
   if (vendor === 'AMD') return '#ed1c24';
   if (vendor === 'Intel') return '#0071c5';
+  if (vendor === 'Hygon') return '#0f766e';
   return '#64748b';
 }
 
@@ -777,17 +779,17 @@ function getGpuColor(name: string): string {
 
 function gpuClass(gpu: GPUCard): string {
   const name = gpu.name.toLowerCase();
-  if (name.includes('b200') || name.includes('h200') || name.includes('h100') || name.includes('h20') || name.includes('h800') || name.includes('mi3')) {
+  if (name.includes('b200') || name.includes('h200') || name.includes('h100') || name.includes('h20') || name.includes('h800') || name.includes('mi3') || name.includes('dcu') || name.includes('k100') || name.includes('z100')) {
     return 'Datacenter';
   }
-  if (name.includes('rtx pro') || name.includes('rtx 6000') || name.includes('l40') || name.includes('l20') || name.includes('ai pro')) {
+  if (name.includes('rtx pro') || name.includes('rtx 6000') || name.includes('l40') || name.includes('l20') || name.includes('ai pro') || name.includes('arc pro')) {
     return 'Workstation';
   }
   return 'Consumer';
 }
 
 function stripVendor(name: string): string {
-  return name.replace(/^NVIDIA\s+/i, '').replace(/^AMD\s+/i, '').trim();
+  return name.replace(/^NVIDIA\s+/i, '').replace(/^AMD\s+/i, '').replace(/^Hygon\s+/i, '').trim();
 }
 
 function inferArchitecture(gpu: GPUCard): string {
@@ -933,6 +935,7 @@ function selectedWeightSupport(gpu: GPUCard | null | undefined, quant: RuntimeQu
 
   const architecture = inferArchitecture(gpu);
   const vendor = hardwareVendor(gpu);
+  const amdLike = vendor === 'AMD' || vendor === 'Hygon' || isAmdArchitecture(architecture);
 
   if (quant === 'fp16') {
     if (architecture === 'Pascal') {
@@ -962,7 +965,16 @@ function selectedWeightSupport(gpu: GPUCard | null | undefined, quant: RuntimeQu
       };
     }
 
-    if (vendor === 'AMD' || isAmdArchitecture(architecture) || architecture === 'Ada' || architecture === 'Hopper') {
+    if (vendor === 'Hygon') {
+      return {
+        label: 'FP8 W8A8 weights',
+        status: 'Partial',
+        note: 'The Hygon/DCU rows here do not publish native FP8 throughput. Treat FP8 as a runtime storage or conversion path unless your DCU stack documents FP8 kernels for the exact SKU.',
+        sources: [guidanceSources.vllmQuantization],
+      };
+    }
+
+    if (amdLike || architecture === 'Ada' || architecture === 'Hopper') {
       return {
         label: 'FP8 W8A8 weights',
         status: 'Supported',
@@ -1019,16 +1031,16 @@ function selectedWeightSupport(gpu: GPUCard | null | undefined, quant: RuntimeQu
     return {
       label: 'INT8 W8A8 weights',
       status: 'Unsupported',
-      note: `vLLM does not list INT8 W8A8 support for ${vendor === 'AMD' ? 'AMD GPU' : architecture}.`,
+      note: `vLLM does not list INT8 W8A8 support for ${amdLike ? 'AMD/DCU-style GPU' : architecture}.`,
       sources: [guidanceSources.vllmQuantization],
     };
   }
 
-  if (vendor === 'AMD' || isAmdArchitecture(architecture)) {
+  if (amdLike) {
     return {
       label: 'INT4 weights',
       status: 'Partial',
-      note: 'The vLLM AWQ/GPTQ/Marlin rows do not list AMD GPU support; GGUF and AMD-specific quantization paths may still be viable depending on the engine.',
+      note: 'The vLLM AWQ/GPTQ/Marlin rows do not list AMD/DCU GPU support; GGUF and vendor-specific quantization paths may still be viable depending on the engine.',
       sources: [guidanceSources.vllmQuantization],
     };
   }
@@ -1089,6 +1101,7 @@ function selectedKvSupport(gpu: GPUCard | null | undefined, kvQuant: KvQuantType
 
   const architecture = inferArchitecture(gpu);
   const vendor = hardwareVendor(gpu);
+  const amdLike = vendor === 'AMD' || vendor === 'Hygon' || isAmdArchitecture(architecture);
 
   if (kvQuant === 'fp16') {
     return {
@@ -1122,7 +1135,7 @@ function selectedKvSupport(gpu: GPUCard | null | undefined, kvQuant: KvQuantType
       };
     }
 
-    if (vendor === 'AMD' || architecture === 'Ada' || architecture === 'Ampere' || architecture === 'Turing' || architecture === 'Volta') {
+    if (amdLike || architecture === 'Ada' || architecture === 'Ampere' || architecture === 'Turing' || architecture === 'Volta') {
       return {
         label: 'FP8 KV cache',
         status: 'Partial',
@@ -1968,7 +1981,7 @@ export default function LLMVRAMCalculator({ locale = 'en_US' }: LLMVRAMCalculato
     () => gpuQuery.trim() ? filteredGpus.slice(0, 8) : [],
     [filteredGpus, gpuQuery]
   );
-  const guidedGpuVendors: VendorFilter[] = ['NVIDIA', 'AMD', 'Intel'];
+  const guidedGpuVendors: VendorFilter[] = ['NVIDIA', 'AMD', 'Intel', 'Hygon'];
   const guidedGpuClasses = useMemo(() => {
     const candidates = gpuCards.filter((gpu) => getGpuVendor(gpu.name) === gpuVendorFilter);
     return unique(candidates.map((gpu) => gpuClass(gpu))).filter((value): value is GpuClassFilter => (
@@ -3437,8 +3450,8 @@ export default function LLMVRAMCalculator({ locale = 'en_US' }: LLMVRAMCalculato
                       className="w-full bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
                     />
                   </label>
-                  <div className="segmented grid-cols-4">
-                    {(['All', 'NVIDIA', 'AMD', 'Intel'] as VendorFilter[]).map((vendor) => (
+                  <div className="segmented grid-cols-2 sm:grid-cols-5">
+                    {(['All', 'NVIDIA', 'AMD', 'Intel', 'Hygon'] as VendorFilter[]).map((vendor) => (
                       <SegmentedButton key={vendor} active={gpuVendorFilter === vendor} onClick={() => setGpuVendorFilter(vendor)}>
                         <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: getVendorColor(vendor) }} />
                         <span>{vendor}</span>
