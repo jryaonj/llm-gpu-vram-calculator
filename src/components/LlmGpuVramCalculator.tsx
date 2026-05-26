@@ -25,14 +25,14 @@ import {
   Zap,
 } from 'lucide-react';
 
-import type { CalcResults, GPUCard, KvQuantType, ModelDef, ReferenceLink, RuntimeQuantType } from '../types/index.ts';
+import type { CalcResults, GPUCard, KvQuantType, ModelDef, QuantType, ReferenceLink, RuntimeQuantType } from '../types/index.ts';
 import { gpuCards } from '../data/gpuCards.ts';
 import { modelDefs } from '../data/modelDefs.ts';
 
 type CalculatorTab = 'results' | 'formulas' | 'model' | 'hardware' | 'hints';
 type ModelPickerMode = 'catalog' | 'structured' | 'custom';
 type GpuPickerMode = 'catalog' | 'numeric';
-type VendorFilter = 'All' | 'NVIDIA' | 'AMD';
+type VendorFilter = 'All' | 'NVIDIA' | 'AMD' | 'Intel';
 type EntryMode = 'guided' | 'detailed' | 'theory';
 type DetailLayoutMode = 'auto' | 'manual';
 type DetailLayoutRatio = '25-75' | '33-67' | '50-50' | '67-33' | '75-25';
@@ -66,6 +66,13 @@ interface SupportRow {
   status: SupportStatus;
   note: string;
   sources: ReferenceLink[];
+}
+
+interface ComputeProfile {
+  dtype: QuantType;
+  label: string;
+  unit: 'TFLOPS' | 'TOPS';
+  value: number;
 }
 
 interface FormulaVariable {
@@ -753,10 +760,11 @@ function getModelVariantColor(variant: string): string {
 function getGpuVendor(name: string): VendorFilter | 'Other' {
   if (name.includes('NVIDIA')) return 'NVIDIA';
   if (name.includes('AMD')) return 'AMD';
+  if (name.includes('Intel')) return 'Intel';
   return 'Other';
 }
 
-function getVendorColor(vendor: VendorFilter | 'Intel' | 'Other'): string {
+function getVendorColor(vendor: VendorFilter | 'Other'): string {
   if (vendor === 'NVIDIA') return '#76b900';
   if (vendor === 'AMD') return '#ed1c24';
   if (vendor === 'Intel') return '#0071c5';
@@ -786,6 +794,8 @@ function inferArchitecture(gpu: GPUCard): string {
   if (gpu.architecture) return gpu.architecture;
 
   const n = gpu.name.toLowerCase();
+  if (n.includes('arc b')) return 'Xe2';
+  if (n.includes('arc a')) return 'Xe HPG';
   if (n.includes('b200') || n.includes('blackwell') || n.includes('5090')) return 'Blackwell';
   if (n.includes('h100') || n.includes('h200') || n.includes('h20') || n.includes('h800')) return 'Hopper';
   if (n.includes('l40') || n.includes('l20') || n.match(/rtx4/) || n.includes('ada')) return 'Ada';
@@ -852,6 +862,32 @@ function sourceNoteSummary(primary?: ReferenceLink, extra?: ReferenceLink[]): st
   return sourceList(primary, extra).map((source) => source.note).filter(Boolean).join(' | ');
 }
 
+function computeProfileUnit(dtype: QuantType): ComputeProfile['unit'] {
+  return dtype === 'int8' || dtype === 'int4' ? 'TOPS' : 'TFLOPS';
+}
+
+function promptComputeProfile(gpu: GPUCard | null | undefined, quant: RuntimeQuantType): ComputeProfile {
+  const fallback: ComputeProfile = { dtype: 'fp16', label: 'FP16', unit: 'TFLOPS', value: 0 };
+  if (!gpu) return fallback;
+
+  const candidates: QuantType[] = quant === 'fp8'
+    ? ['fp8', 'fp16', 'fp32']
+    : quant === 'fp16'
+      ? ['fp16', 'fp32']
+      : quant === 'int8'
+        ? ['int8', 'fp16', 'fp32']
+        : ['int4', 'int8', 'fp16', 'fp32'];
+  const dtype = candidates.find((candidate) => (gpu.processPower[candidate] ?? 0) > 0);
+  if (!dtype) return fallback;
+
+  return {
+    dtype,
+    label: dtype.toUpperCase(),
+    unit: computeProfileUnit(dtype),
+    value: gpu.processPower[dtype] ?? 0,
+  };
+}
+
 function downloadCsv(filename: string, rows: CsvRow[]) {
   if (rows.length === 0) return;
 
@@ -871,7 +907,7 @@ function downloadCsv(filename: string, rows: CsvRow[]) {
   URL.revokeObjectURL(url);
 }
 
-function hardwareVendor(gpu?: GPUCard | null): VendorFilter | 'Intel' | 'Other' {
+function hardwareVendor(gpu?: GPUCard | null): VendorFilter | 'Other' {
   if (!gpu) return 'Other';
   if (gpu.name.includes('Intel')) return 'Intel';
   return getGpuVendor(gpu.name);
@@ -917,6 +953,15 @@ function selectedWeightSupport(gpu: GPUCard | null | undefined, quant: RuntimeQu
   }
 
   if (quant === 'fp8') {
+    if (vendor === 'Intel') {
+      return {
+        label: 'FP8 W8A8 weights',
+        status: 'Unsupported',
+        note: 'Intel Arc rows do not list native FP8 throughput in this catalog. Use FP16 or INT8-oriented runtimes unless your backend explicitly exposes FP8 kernels.',
+        sources: [guidanceSources.vllmQuantization],
+      };
+    }
+
     if (vendor === 'AMD' || isAmdArchitecture(architecture) || architecture === 'Ada' || architecture === 'Hopper') {
       return {
         label: 'FP8 W8A8 weights',
@@ -944,6 +989,15 @@ function selectedWeightSupport(gpu: GPUCard | null | undefined, quant: RuntimeQu
   }
 
   if (quant === 'int8') {
+    if (vendor === 'Intel') {
+      return {
+        label: 'INT8 W8A8 weights',
+        status: 'Partial',
+        note: 'Intel Arc exposes XMX INT8 TOPS, but serving support is backend-specific. Validate OpenVINO/IPEX/engine support for the exact model format.',
+        sources: [guidanceSources.vllmQuantization],
+      };
+    }
+
     if (['Turing', 'Ampere', 'Ada', 'Hopper'].includes(architecture)) {
       return {
         label: 'INT8 W8A8 weights',
@@ -975,6 +1029,15 @@ function selectedWeightSupport(gpu: GPUCard | null | undefined, quant: RuntimeQu
       label: 'INT4 weights',
       status: 'Partial',
       note: 'The vLLM AWQ/GPTQ/Marlin rows do not list AMD GPU support; GGUF and AMD-specific quantization paths may still be viable depending on the engine.',
+      sources: [guidanceSources.vllmQuantization],
+    };
+  }
+
+  if (vendor === 'Intel') {
+    return {
+      label: 'INT4 weights',
+      status: 'Partial',
+      note: 'The hardware has XMX INT8 acceleration, but INT4 LLM support depends on the selected Intel runtime, quantized checkpoint format, and kernels.',
       sources: [guidanceSources.vllmQuantization],
     };
   }
@@ -1593,10 +1656,10 @@ function TheoryPanel({ locale, parallelGPUs, sources }: { locale: Locale; parall
               <h4 className="text-sm font-bold text-slate-950">{zh ? '预填充路径：计算受限先验' : 'Prompt path: compute bound prior'}</h4>
               <p className="mt-2 text-sm leading-6 text-slate-600">
                 {zh
-                  ? '预填充被近似为一次覆盖全量参数的密集计算过程。公式从标称 FP16 风格吞吐开始，再除以总参数量和一个 `sqrt(2)` 保守阻尼项。'
-                  : 'Prompt processing is modeled as a dense-compute pass over the full parameter count. The formula starts from advertised FP16-style throughput, then divides by total model parameters and a `sqrt(2)` dampener.'}
+                  ? '预填充被近似为一次覆盖全量参数的密集计算过程。公式从所选精度可用的标称吞吐开始，再除以总参数量和一个 `sqrt(2)` 保守阻尼项。'
+                  : 'Prompt processing is modeled as a dense-compute pass over the full parameter count. The formula starts from the selected precision throughput available on the card, then divides by total model parameters and a `sqrt(2)` dampener.'}
               </p>
-              <code className="formula-code mt-3 block rounded-lg bg-slate-950 p-3 text-sm text-white">prompt_tok_s = fp16_tflops x 1000 x gpu_count^0.6 / (total_params_b x sqrt(2))</code>
+              <code className="formula-code mt-3 block rounded-lg bg-slate-950 p-3 text-sm text-white">prompt_tok_s = prompt_ops x 1000 x gpu_count^0.6 / (total_params_b x sqrt(2))</code>
               <p className="mt-3 text-sm leading-6 text-slate-600">
                 {zh
                   ? '`sqrt(2)` 不是硬件定律，而是对非 GEMM 工作、kernel 开销、混合精度行为、batch 形状和调度损耗的保守可用性因子。它适合作为默认先验，真实部署后应使用 benchmark 校准。'
@@ -1905,7 +1968,7 @@ export default function LLMVRAMCalculator({ locale = 'en_US' }: LLMVRAMCalculato
     () => gpuQuery.trim() ? filteredGpus.slice(0, 8) : [],
     [filteredGpus, gpuQuery]
   );
-  const guidedGpuVendors: VendorFilter[] = ['NVIDIA', 'AMD'];
+  const guidedGpuVendors: VendorFilter[] = ['NVIDIA', 'AMD', 'Intel'];
   const guidedGpuClasses = useMemo(() => {
     const candidates = gpuCards.filter((gpu) => getGpuVendor(gpu.name) === gpuVendorFilter);
     return unique(candidates.map((gpu) => gpuClass(gpu))).filter((value): value is GpuClassFilter => (
@@ -1959,6 +2022,7 @@ export default function LLMVRAMCalculator({ locale = 'en_US' }: LLMVRAMCalculato
 
   const effectiveModel = useCustomModel ? customModel : selectedModel;
   const effectiveCard = useCustomGPU ? customCard : selectedCard;
+  const effectivePromptCompute = useMemo(() => promptComputeProfile(effectiveCard, quantType), [effectiveCard, quantType]);
   const effectiveModelMeta = effectiveModel ? modelMeta(effectiveModel) : null;
   const effectiveModelRelease = formatReleaseDate(effectiveModel?.releaseDate);
   const effectiveGpuRelease = formatReleaseDate(effectiveCard?.releaseDate);
@@ -2060,16 +2124,16 @@ export default function LLMVRAMCalculator({ locale = 'en_US' }: LLMVRAMCalculato
     {
       title: isZh ? 'Token 吞吐' : 'Token Throughput',
       purpose: isZh ? '粗略拆分预填充计算吞吐与生成带宽吞吐。' : 'Gives a coarse split between prompt compute throughput and generation bandwidth throughput.',
-      equation: 'prompt_tok_s = fp16_tflops x 1000 x gpu_count^0.6 / (total_params_b x sqrt(2))\ngen_tok_s = bandwidth_gbs x gpu_count^0.8 / (active_params_b x weight_bytes)',
+      equation: 'prompt_tok_s = prompt_ops x 1000 x gpu_count^0.6 / (total_params_b x sqrt(2))\ngen_tok_s = bandwidth_gbs x gpu_count^0.8 / (active_params_b x weight_bytes)',
       icon: <Zap className="h-4 w-4" />,
       accentClass: 'bg-amber-100 text-amber-700',
       variables: [
-        { name: 'fp16_tflops', value: `${formatNumber(effectiveCard?.processPower.fp16 ?? 0)} TFLOPS`, description: isZh ? '用于预填充处理的密集 FP16 风格计算代理值。' : 'Dense FP16-style compute proxy used for prompt processing.' },
+        { name: 'prompt_ops', value: `${formatNumber(effectivePromptCompute.value)} ${effectivePromptCompute.label} ${effectivePromptCompute.unit}`, description: isZh ? '根据所选权重量化优先匹配的原生/代理计算吞吐；没有 FP8 时会回退到 FP16 或 FP32。' : 'Native/proxy compute throughput matched to the selected weight precision; falls back to FP16 or FP32 when FP8 is not exposed.' },
         { name: 'bandwidth_gbs', value: `${formatNumber(effectiveCard?.memoryBandwidthGBs ?? 0, 0)} GB/s`, description: isZh ? '用于自回归生成的显存带宽代理值。' : 'Memory bandwidth proxy used for autoregressive generation.' },
         { name: 'active_params_b', value: `${effectiveModel?.activeParamsB ?? 0}B`, description: isZh ? '每个生成 token 触达的参数量；MoE 下小于总参数量。' : 'Parameters touched per generated token; smaller than total params for MoE.' },
         { name: 'weight_bytes', value: `${quantByteValue} ${byteUnit}`, description: isZh ? '带宽估算中使用的所选权重精度成本。' : 'Selected weight precision cost used in the bandwidth estimate.' },
       ],
-      substitution: `${isZh ? '预填充' : 'prompt'}: ${formatNumber(effectiveCard?.processPower.fp16 ?? 0)} x 1000 x ${parallelGPUs}^0.6 / (${effectiveModel?.totalParamsB ?? 0} x sqrt(2)); ${isZh ? '生成' : 'generation'}: ${formatNumber(effectiveCard?.memoryBandwidthGBs ?? 0, 0)} x ${parallelGPUs}^0.8 / (${effectiveModel?.activeParamsB ?? 0} x ${quantByteValue})`,
+      substitution: `${isZh ? '预填充' : 'prompt'}: ${formatNumber(effectivePromptCompute.value)} ${effectivePromptCompute.label} ${effectivePromptCompute.unit} x 1000 x ${parallelGPUs}^0.6 / (${effectiveModel?.totalParamsB ?? 0} x sqrt(2)); ${isZh ? '生成' : 'generation'}: ${formatNumber(effectiveCard?.memoryBandwidthGBs ?? 0, 0)} x ${parallelGPUs}^0.8 / (${effectiveModel?.activeParamsB ?? 0} x ${quantByteValue})`,
       result: isZh
         ? `${formatNumber(results?.genSpeed ?? 0, 0)} 生成 / ${formatNumber(results?.promptSpeed ?? 0, 0)} 预填充 tok/s`
         : `${formatNumber(results?.genSpeed ?? 0, 0)} gen / ${formatNumber(results?.promptSpeed ?? 0, 0)} prompt tok/s`,
@@ -2242,6 +2306,8 @@ export default function LLMVRAMCalculator({ locale = 'en_US' }: LLMVRAMCalculato
       fp16_tflops: gpu.processPower.fp16,
       fp8_tflops: gpu.processPower.fp8,
       fp32_tflops: gpu.processPower.fp32,
+      int8_tops: gpu.processPower.int8,
+      int4_tops: gpu.processPower.int4,
       default_kv_cache: gpu.kvQuantType,
       release_date: gpu.releaseDate,
       source_urls: sourceSummary(gpu.source, gpu.sources),
@@ -2258,6 +2324,9 @@ export default function LLMVRAMCalculator({ locale = 'en_US' }: LLMVRAMCalculato
       model_active_params_b: effectiveModel?.activeParamsB,
       model_release_date: effectiveModel?.releaseDate,
       hardware: effectiveCard?.name,
+      prompt_compute_dtype: effectivePromptCompute.label,
+      prompt_compute_unit: effectivePromptCompute.unit,
+      prompt_compute_ops: effectivePromptCompute.value,
       hardware_vendor: effectiveCard ? getGpuVendor(effectiveCard.name) : '',
       hardware_architecture: effectiveCard ? inferArchitecture(effectiveCard) : '',
       hardware_release_date: effectiveCard?.releaseDate,
@@ -2349,11 +2418,11 @@ export default function LLMVRAMCalculator({ locale = 'en_US' }: LLMVRAMCalculato
 
     const ppScaling = Math.pow(parallelGPUs, 0.6);
     const membwScaling = Math.pow(parallelGPUs, 0.8);
-    const processPowerFP16 = (effectiveCard.processPower.fp16 ?? 0) * ppScaling;
+    const processPower = effectivePromptCompute.value * ppScaling;
     const memoryBandwidth = effectiveCard.memoryBandwidthGBs * membwScaling;
     const activeParams = Math.max(0.01, effectiveModel.activeParamsB);
     const totalParams = Math.max(0.01, effectiveModel.totalParamsB);
-    const promptSpeed = (processPowerFP16 * 1000) / (totalParams * Math.sqrt(2));
+    const promptSpeed = (processPower * 1000) / (totalParams * Math.sqrt(2));
     const genSpeed = memoryBandwidth / (activeParams * quantByteValue);
     const sharedPrompt = promptSpeed / userCount;
     const sharedGen = genSpeed / userCount;
@@ -2381,6 +2450,7 @@ export default function LLMVRAMCalculator({ locale = 'en_US' }: LLMVRAMCalculato
   }, [
     effectiveCard,
     effectiveModel,
+    effectivePromptCompute,
     kvQuantType,
     maxLength,
     minReserveVramGB,
@@ -2740,7 +2810,7 @@ export default function LLMVRAMCalculator({ locale = 'en_US' }: LLMVRAMCalculato
                       <button key={gpu.name} type="button" className="picker-card" data-active={selectedCard?.name === gpu.name} onClick={() => applyGuideGpuCard(gpu)}>
                         <div className="wrap-anywhere text-sm font-bold leading-snug text-slate-950">{stripVendor(gpu.name)}</div>
                         <div className="mt-1 text-xs text-slate-500">{gpuClass(gpu)} / {inferArchitecture(gpu)} / {t('released')} {formatReleaseDate(gpu.releaseDate)}</div>
-                        <div className="mt-3 grid grid-cols-3 gap-2 text-xs text-slate-600"><span>{gpu.vramGb} GB</span><span>{formatNumber(gpu.memoryBandwidthGBs, 0)} GB/s</span><span>{formatNumber(gpu.processPower.fp16 ?? 0)} TFLOPS</span></div>
+                        <div className="mt-3 grid grid-cols-3 gap-2 text-xs text-slate-600"><span>{gpu.vramGb} GB</span><span>{formatNumber(gpu.memoryBandwidthGBs, 0)} GB/s</span><span>{formatNumber(promptComputeProfile(gpu, quantType).value)} {promptComputeProfile(gpu, quantType).label} {promptComputeProfile(gpu, quantType).unit}</span></div>
                       </button>
                     ))}
                   </div>
@@ -2817,7 +2887,7 @@ export default function LLMVRAMCalculator({ locale = 'en_US' }: LLMVRAMCalculato
                             <button key={gpu.name} type="button" className="picker-card" data-active={selectedCard?.name === gpu.name} onClick={() => applyGuideGpuCard(gpu)}>
                               <div className="wrap-anywhere text-sm font-bold leading-snug text-slate-950">{stripVendor(gpu.name)}</div>
                               <div className="mt-1 text-xs text-slate-500">{inferArchitecture(gpu)} / {t('released')} {formatReleaseDate(gpu.releaseDate)}</div>
-                              <div className="mt-3 grid grid-cols-3 gap-2 text-xs text-slate-600"><span>{gpu.vramGb} GB</span><span>{formatNumber(gpu.memoryBandwidthGBs, 0)} GB/s</span><span>{formatNumber(gpu.processPower.fp16 ?? 0)} TFLOPS</span></div>
+                              <div className="mt-3 grid grid-cols-3 gap-2 text-xs text-slate-600"><span>{gpu.vramGb} GB</span><span>{formatNumber(gpu.memoryBandwidthGBs, 0)} GB/s</span><span>{formatNumber(promptComputeProfile(gpu, quantType).value)} {promptComputeProfile(gpu, quantType).label} {promptComputeProfile(gpu, quantType).unit}</span></div>
                             </button>
                           ))}
                         </div>
@@ -2850,7 +2920,7 @@ export default function LLMVRAMCalculator({ locale = 'en_US' }: LLMVRAMCalculato
                             setGpuMode('numeric');
                             setCustomSupplier(supplier);
                           }}
-                          options={customSuppliers.map((supplier) => ({ value: supplier, label: supplier, markerColor: getVendorColor(supplier as VendorFilter | 'Intel' | 'Other') }))}
+                          options={customSuppliers.map((supplier) => ({ value: supplier, label: supplier, markerColor: getVendorColor(supplier as VendorFilter | 'Other') }))}
                         />
                       </div>
                       <div>
@@ -3367,8 +3437,8 @@ export default function LLMVRAMCalculator({ locale = 'en_US' }: LLMVRAMCalculato
                       className="w-full bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
                     />
                   </label>
-                  <div className="segmented grid-cols-3">
-                    {(['All', 'NVIDIA', 'AMD'] as VendorFilter[]).map((vendor) => (
+                  <div className="segmented grid-cols-4">
+                    {(['All', 'NVIDIA', 'AMD', 'Intel'] as VendorFilter[]).map((vendor) => (
                       <SegmentedButton key={vendor} active={gpuVendorFilter === vendor} onClick={() => setGpuVendorFilter(vendor)}>
                         <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: getVendorColor(vendor) }} />
                         <span>{vendor}</span>
@@ -3398,7 +3468,7 @@ export default function LLMVRAMCalculator({ locale = 'en_US' }: LLMVRAMCalculato
                       <div className="mt-3 grid grid-cols-3 gap-2 text-xs text-slate-600">
                         <span>{gpu.vramGb} GB</span>
                         <span>{formatNumber(gpu.memoryBandwidthGBs, 0)} GB/s</span>
-                        <span>{formatNumber(gpu.processPower.fp16 ?? 0)} TFLOPS</span>
+                        <span>{formatNumber(promptComputeProfile(gpu, quantType).value)} {promptComputeProfile(gpu, quantType).label} {promptComputeProfile(gpu, quantType).unit}</span>
                       </div>
                       <div className="mt-2 text-xs font-medium text-slate-400">{t('released')} {formatReleaseDate(gpu.releaseDate)}</div>
                     </button>
@@ -3415,7 +3485,7 @@ export default function LLMVRAMCalculator({ locale = 'en_US' }: LLMVRAMCalculato
                     ariaLabel={t('supplier')}
                     value={customSupplier}
                     onChange={setCustomSupplier}
-                    options={customSuppliers.map((supplier) => ({ value: supplier, label: supplier, markerColor: getVendorColor(supplier as VendorFilter | 'Intel' | 'Other') }))}
+                    options={customSuppliers.map((supplier) => ({ value: supplier, label: supplier, markerColor: getVendorColor(supplier as VendorFilter | 'Other') }))}
                   />
                 </div>
                 <div>
@@ -3688,7 +3758,7 @@ export default function LLMVRAMCalculator({ locale = 'en_US' }: LLMVRAMCalculato
                   <StatTile label={t('vramPerGpu')} value={`${effectiveCard?.vramGb ?? 0} GB`} />
                   <StatTile label={t('totalVram')} value={`${formatNumber(totalGpuVram)} GB`} />
                   <StatTile label={t('bandwidth')} value={`${formatNumber(effectiveCard?.memoryBandwidthGBs ?? 0, 0)} GB/s`} />
-                  <StatTile label="FP16" value={`${formatNumber(effectiveCard?.processPower.fp16 ?? 0)} TFLOPS`} />
+                  <StatTile label={effectivePromptCompute.label} value={`${formatNumber(effectivePromptCompute.value)} ${effectivePromptCompute.unit}`} />
                   <StatTile label={t('released')} value={effectiveGpuRelease} />
                 </div>
               </div>
